@@ -2,21 +2,47 @@ package ro.msg.learning.shop.domain;
 
 import lombok.Data;
 
+import javax.persistence.*;
+import java.util.List;
+
+@Entity(name="Order")
 @Data
+@Table(name="order_table")                      //Changed table name from 'order' to 'order_table'
 public class Order {
 
-    int orderId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name="ORDERID")
+    private int orderId;
 
-    int locationId;             //FK - Location: products are shipped from here
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="LOCATIONID")
+    private Location location;
 
-    int customerId;             //FK - Customer: buyer
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="CUSTOMERID")
+    private Customer customer;
 
-    String country;
+    @OneToMany(mappedBy = "order")
+    private List<OrderDetail> orderDetails;
 
-    String city;
+//    @Column(name="LOCATIONID")
+//    private int locationId;             //FK - Location: products are shipped from here
+//
+//    @Column(name="CUSTOMERID")
+//    private int customerId;             //FK - Customer: buyer
 
-    String region;
 
-    String address;
+    @Column(name="COUNTRY")
+    private String country;
+
+    @Column(name="CITY")
+    private String city;
+
+    @Column(name="REGION")
+    private String region;
+
+    @Column(name="ADDRESS")
+    private String address;
 
 }

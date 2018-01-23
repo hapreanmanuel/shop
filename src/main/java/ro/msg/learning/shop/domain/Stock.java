@@ -1,13 +1,39 @@
 package ro.msg.learning.shop.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.io.Serializable;
 
 @Data
+@Entity(name="Stock")
+@Table(name="STOCK")
 public class Stock {
 
-    int productId;                  //FK - Product: aggregate primary key
+    @EmbeddedId
+    private StockKey stockKey;
 
-    int locationId;                 //FK - Location: aggregate primary key
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="PRODUCTID",referencedColumnName = "PRODUCTID",insertable = false,updatable = false)
+    private Product product;
 
-    int quantity;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="LOCATIONID",referencedColumnName = "LOCATIONID",insertable = false,updatable = false)
+    private Location location;
+
+    @Column(name="QUANTITY")
+    private int quantity;
+}
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Embeddable
+class StockKey implements Serializable {
+    @Column(name="PRODUCTID")
+    private int productId;
+    @Column(name="LOCATIONID")
+    private int locationId;
 }

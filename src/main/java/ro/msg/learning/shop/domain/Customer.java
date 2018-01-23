@@ -1,17 +1,29 @@
 package ro.msg.learning.shop.domain;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
+import javax.persistence.*;
 
+@Entity(name="Customer")
 @Data
+@Table(name="Customer")
 public class Customer {
 
-    int customerId;                         //primary key
+    @Setter(AccessLevel.NONE)
+    @Id
+    @Column(name="CUSTOMERID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int customerId;                         //primary key
 
-    String firstName;
+    @Column(name="FIRSTNAME")
+    private String firstName;
 
-    String lastName;
+    @Column(name="LASTNAME")
+    private String lastName;
 
-    String userName;
+    @Column(name="USERNAME", unique = true)
+    private String userName;
 
 }

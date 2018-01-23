@@ -1,20 +1,36 @@
 package ro.msg.learning.shop.domain;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
+import javax.persistence.*;
+
+
+@Entity(name="Location")
 @Data
+@Table(name="Location")
 public class Location {
 
-    int locationId;
+    @Setter(AccessLevel.NONE)
+    @Id
+    @Column(name="LOCATIONID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int locationId;
 
-    String name;
+    @Column(name="NAME")
+    private String name;
 
-    String country;
+    @Column(name="COUNTRY")
+    private String country;
 
-    String city;
+    @Column(name="CITY")
+    private String city;
 
-    String region;
+    @Column(name="REGION")
+    private String region;
 
-    String address;
+    @Column(name="ADDRESS")
+    private String address;
 
 }

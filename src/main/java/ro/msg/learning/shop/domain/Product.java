@@ -1,26 +1,46 @@
 package ro.msg.learning.shop.domain;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 
+@Entity(name="Product")
 @Data
+@Table(name="Product")
 public class Product {
 
-    int productId;                      //primary key
+    @Setter(AccessLevel.NONE)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name="PRODUCTID")
+    private int productId;                      //primary key
 
-    int categoryId;                     //foreign key (ProductCategory)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="CATEGORYID")
+    private ProductCategory category;
 
-    int supplierId;                     //foreign key (Supplier)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="SUPPLIERID")
+    private Supplier supplier;
 
-    String name;
+//    @Column(name="CATEGORYID")
+//    private int categoryId;                     //foreign key (ProductCategory) -> this field exists in 'Product' table
+//
+//    @Column(name="SUPPLIERID")
+//    private int supplierId;                     //foreign key (Supplier)        -> this field exists in 'Product' table
 
-    String description;
+    @Column(name="NAME")
+    private String name;
 
-    BigDecimal price;
+    @Column(name="DESCRIPTION")
+    private String description;
 
-    double weight;
+    @Column(name="PRICE")
+    private BigDecimal price;
 
-
-
+    @Column(name="WEIGHT")
+    private double weight;
 }
