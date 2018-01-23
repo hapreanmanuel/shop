@@ -26,12 +26,6 @@ public class Product {
     @JoinColumn(name="SUPPLIERID")
     private Supplier supplier;
 
-//    @Column(name="CATEGORYID")
-//    private int categoryId;                     //foreign key (ProductCategory) -> this field exists in 'Product' table
-//
-//    @Column(name="SUPPLIERID")
-//    private int supplierId;                     //foreign key (Supplier)        -> this field exists in 'Product' table
-
     @Column(name="NAME")
     private String name;
 
