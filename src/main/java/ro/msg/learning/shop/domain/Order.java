@@ -26,13 +26,6 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderDetail> orderDetails;
 
-//    @Column(name="LOCATIONID")
-//    private int locationId;             //FK - Location: products are shipped from here
-//
-//    @Column(name="CUSTOMERID")
-//    private int customerId;             //FK - Customer: buyer
-
-
     @Column(name="COUNTRY")
     private String country;
 
