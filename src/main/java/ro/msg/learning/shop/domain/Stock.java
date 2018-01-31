@@ -1,11 +1,7 @@
 package ro.msg.learning.shop.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Data
 @Entity(name="Stock")
@@ -27,13 +23,3 @@ public class Stock {
     private int quantity;
 }
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-@Embeddable
-class StockKey implements Serializable {
-    @Column(name="PRODUCTID")
-    private int productId;
-    @Column(name="LOCATIONID")
-    private int locationId;
-}

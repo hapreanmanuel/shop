@@ -1,9 +1,7 @@
 package ro.msg.learning.shop.domain;
 
 import lombok.*;
-
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Entity(name="OrderDetail")
 @Data
@@ -24,15 +22,12 @@ public class OrderDetail {
     @JoinColumn(name="PRODUCTID",referencedColumnName = "PRODUCTID",insertable = false,updatable = false)
     private Product product;
 
+    //Constructor used when creating a new order detail
+    public OrderDetail(Order order, Product product) {
+        this.order = order;
+        this.product = product;
+        this.orderDetailKey = new OrderDetailKey(order.getOrderId(),product.getProductId());
+    }
 }
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-@Embeddable
-class OrderDetailKey implements Serializable{
-    @Column(name="ORDERID")
-    private int orderId;
-    @Column(name="PRODUCTID")
-    private int productId;
-}
+
