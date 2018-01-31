@@ -2,7 +2,7 @@ package ro.msg.learning.shop.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ro.msg.learning.shop.domain.Supplier;
+import ro.msg.learning.shop.domain.tables.Supplier;
 import ro.msg.learning.shop.repository.SupplierRepository;
 
 import java.util.List;

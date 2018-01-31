@@ -1,9 +1,14 @@
 package ro.msg.learning.shop.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-import ro.msg.learning.shop.domain.Stock;
+import ro.msg.learning.shop.domain.tables.Stock;
 
-@Repository
+import java.util.List;
+
 public interface StockRepository extends JpaRepository<Stock, Integer>{
+
+    Stock findByStockKey_LocationIdAndStockKey_ProductId(int locationId, int productId);
+
+    List<Stock> findAllByLocation_LocationId(int locationId);
+
 }
