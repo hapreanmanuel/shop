@@ -1,6 +1,9 @@
-package ro.msg.learning.shop.domain;
+package ro.msg.learning.shop.domain.tables;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
+import ro.msg.learning.shop.domain.misc.Address;
 
 import javax.persistence.*;
 import java.util.List;
@@ -10,8 +13,9 @@ import java.util.List;
 @Table(name="order_table")                      //Changed table name from 'order' to 'order_table'
 public class Order {
 
+    @Setter(AccessLevel.NONE)
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ORDERID")
     private int orderId;
 
@@ -26,16 +30,6 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderDetail> orderDetails;
 
-    @Column(name="COUNTRY")
-    private String country;
-
-    @Column(name="CITY")
-    private String city;
-
-    @Column(name="REGION")
-    private String region;
-
-    @Column(name="ADDRESS")
-    private String address;
+    private Address shippingAddress;
 
 }

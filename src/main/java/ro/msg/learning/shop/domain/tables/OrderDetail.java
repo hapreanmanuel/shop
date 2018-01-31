@@ -1,6 +1,8 @@
-package ro.msg.learning.shop.domain;
+package ro.msg.learning.shop.domain.tables;
 
 import lombok.*;
+import ro.msg.learning.shop.domain.misc.OrderDetailKey;
+
 import javax.persistence.*;
 
 @Entity(name="OrderDetail")

@@ -1,4 +1,4 @@
-package ro.msg.learning.shop.domain;
+package ro.msg.learning.shop.domain.tables;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -14,7 +14,7 @@ public class Product {
 
     @Setter(AccessLevel.NONE)
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="PRODUCTID")
     private int productId;                      //primary key
 
@@ -26,7 +26,7 @@ public class Product {
     @JoinColumn(name="SUPPLIERID")
     private Supplier supplier;
 
-    @Column(name="NAME")
+    @Column(name="NAME",unique=true)
     private String name;
 
     @Column(name="DESCRIPTION")

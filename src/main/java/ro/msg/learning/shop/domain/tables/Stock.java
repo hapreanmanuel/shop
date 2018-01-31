@@ -1,6 +1,8 @@
-package ro.msg.learning.shop.domain;
+package ro.msg.learning.shop.domain.tables;
 
 import lombok.Data;
+import ro.msg.learning.shop.domain.misc.StockKey;
+
 import javax.persistence.*;
 
 @Data

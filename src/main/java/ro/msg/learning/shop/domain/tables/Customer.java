@@ -1,4 +1,4 @@
-package ro.msg.learning.shop.domain;
+package ro.msg.learning.shop.domain.tables;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -14,7 +14,7 @@ public class Customer {
     @Setter(AccessLevel.NONE)
     @Id
     @Column(name="CUSTOMERID")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int customerId;                         //primary key
 
     @Column(name="FIRSTNAME")

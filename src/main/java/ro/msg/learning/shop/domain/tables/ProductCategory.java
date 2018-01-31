@@ -1,4 +1,4 @@
-package ro.msg.learning.shop.domain;
+package ro.msg.learning.shop.domain.tables;
 
 import lombok.AccessLevel;
 import lombok.Data;
@@ -13,7 +13,7 @@ public class ProductCategory {
 
     @Setter(AccessLevel.NONE)
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="CATEGORYID")
     private int categoryId;                     //PK
 
