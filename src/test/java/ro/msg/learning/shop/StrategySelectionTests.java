@@ -9,7 +9,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import ro.msg.learning.shop.domain.misc.OrderSpecifications;
 import ro.msg.learning.shop.domain.misc.ResolvedOrderDetail;
 import ro.msg.learning.shop.domain.misc.ShoppingCartEntry;
-import ro.msg.learning.shop.domain.tables.Order;
 import ro.msg.learning.shop.service.OrderService;
 import ro.msg.learning.shop.service.StockService;
 
@@ -51,8 +50,6 @@ public class StrategySelectionTests {
         OrderSpecifications orderSpecifications1 = new OrderSpecifications(1);
         orderSpecifications1.addShoppingCartEntry(new ShoppingCartEntry(1,10));
         orderSpecifications1.addShoppingCartEntry(new ShoppingCartEntry(2,25));
-
-        Order order1 = orderService.createNewOrder(orderSpecifications1);
 
         //Expected to find a suitable strategy in the first location
         List<ResolvedOrderDetail> slStrategyOrder1 = stockService.getStrategy(orderSpecifications1);

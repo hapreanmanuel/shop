@@ -8,6 +8,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import ro.msg.learning.shop.domain.misc.Address;
+import ro.msg.learning.shop.domain.misc.OrderSpecifications;
+import ro.msg.learning.shop.domain.misc.ShoppingCartEntry;
 import ro.msg.learning.shop.domain.tables.*;
 import ro.msg.learning.shop.service.*;
 
@@ -36,9 +38,16 @@ class AddMockDataToDatabase implements CommandLineRunner {
 	//Service classes ref
 	@Autowired
 	private ShopService shopService;
-
 	@Autowired
 	private StockService stockService;
+	@Autowired
+	private OrderService orderService;
+
+	public AddMockDataToDatabase(ShopService shopService, StockService stockService, OrderService orderService) {
+		this.shopService = shopService;
+		this.stockService = stockService;
+		this.orderService = orderService;
+	}
 
 	@Override
 	public void run(String... strings) {
@@ -46,8 +55,9 @@ class AddMockDataToDatabase implements CommandLineRunner {
 		Customer c1 = new Customer(); c1.setFirstName("Davidson"); c1.setLastName("Jones"); c1.setUserName("djones223");
 		Customer c2 = new Customer(); c2.setFirstName("Electronica"); c2.setLastName("Association"); c2.setUserName("electrassociation");
 		Customer c3 = new Customer(); c3.setFirstName("Mock Customer"); c3.setLastName(""); c3.setUserName("shopster3333");
+		Customer c4 = new Customer(); c4.setFirstName("dummyFirstName"); c4.setLastName("dummyLastName"); c4.setUserName("dummy");
 
-		shopService.addCustomer(c1);shopService.addCustomer(c2);shopService.addCustomer(c3);
+		shopService.addCustomer(c1);shopService.addCustomer(c2);shopService.addCustomer(c3);shopService.addCustomer(c4);
 
 		//Locations
 		Location l1 = new Location(); l1.setName("Main Location");l1.setAddress(new Address()); l1.getAddress().setFullAddress("Str. Dorobantilor 77"); l1.getAddress().setCity("Cluj-Napoca"); l1.getAddress().setRegion("CJ");l1.getAddress().setCountry("Romania");
@@ -91,5 +101,25 @@ class AddMockDataToDatabase implements CommandLineRunner {
 				else stockService.importStock(location,product ,l2Quantity);
 			});
 		});
+
+		//Create an order for customer c1
+		OrderSpecifications orderSpecifications = new OrderSpecifications(c1.getCustomerId());
+
+		//Delivery address
+		Address address = new Address();
+		address.setCity("Cluj-Napoca");
+		address.setCountry("Romania");
+		address.setRegion("CJ");
+		address.setFullAddress("Dorobantilor 112B AP6");
+
+		orderSpecifications.setAddress(address);
+
+		//Add some products to shopping cart
+		orderSpecifications.addShoppingCartEntry(new ShoppingCartEntry(3, 10));
+		orderSpecifications.addShoppingCartEntry(new ShoppingCartEntry(4,20));
+
+		//Submit the order by calling the order creation method from orderService
+		orderService.createNewOrder(orderSpecifications);
+
 	}
 }
