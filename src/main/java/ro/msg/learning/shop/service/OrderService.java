@@ -2,10 +2,13 @@ package ro.msg.learning.shop.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ro.msg.learning.shop.domain.misc.ResolvedOrderDetail;
 import ro.msg.learning.shop.domain.tables.Order;
 import ro.msg.learning.shop.domain.misc.OrderSpecifications;
+import ro.msg.learning.shop.domain.tables.OrderDetail;
 import ro.msg.learning.shop.repository.OrderRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -14,7 +17,10 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
-    public OrderService(OrderRepository orderRepository){this.orderRepository = orderRepository;}
+    @Autowired
+    private ShopService shopService;
+
+    public OrderService(OrderRepository orderRepository, ShopService shopService){this.orderRepository = orderRepository; this.shopService = shopService;}
 
     public Order getOrder(int orderId){return orderRepository.findOne(orderId);}
 
@@ -33,18 +39,24 @@ public class OrderService {
         •	The stocks need to be updated by subtracting the shipped goods.
         •	Afterwards the order is persisted in the database and returned.
 
-
-    @Autowired
-    private CustomerService customerService;
-
-    public Order createNewOrder(OrderSpecifications orderSpecifications) throws Exception {
-        Order newOrder = new Order();
-
-        newOrder.setCustomer(customerService.getCustomer(orderSpecifications.getCustomerId()));
-
-
-        return new Order();
-    }
 */
 
+    //The return entry is not saved to the database yet
+    //TODO exception handling
+    public Order createNewOrder(OrderSpecifications orderSpecifications) throws RuntimeException {
+        Order newOrder = new Order();
+
+        newOrder.setCustomer(shopService.getCustomer(orderSpecifications.getCustomerId()));
+        newOrder.setShippingAddress(orderSpecifications.getAddress());
+        newOrder.setOrderDetails(new ArrayList<>());
+
+        orderSpecifications.getShoppingCart().forEach(shoppingCartEntry -> newOrder.getOrderDetails().add(new OrderDetail(newOrder,shopService.getProduct(shoppingCartEntry.getProductId()))));
+        return newOrder;
+    }
 }
+
+
+
+
+
+
