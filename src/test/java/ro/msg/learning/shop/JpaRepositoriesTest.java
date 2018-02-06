@@ -9,14 +9,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class JpaRepositoriesTest {
 
+
+
     @Test
     public void OrderDetailRepositoryTest(){
         //Test the find method by orderId and productId
-
-
-
-
-
-
     }
+
+
 }
