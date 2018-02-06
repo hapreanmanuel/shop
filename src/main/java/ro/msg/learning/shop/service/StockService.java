@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ro.msg.learning.shop.domain.misc.OrderSpecifications;
 import ro.msg.learning.shop.domain.misc.ResolvedOrderDetail;
-import ro.msg.learning.shop.domain.misc.strategy.GreedyAlgorithm;
-import ro.msg.learning.shop.domain.misc.strategy.MostAbundantAlgorithm;
-import ro.msg.learning.shop.domain.misc.strategy.SingleLocationAlgorithm;
-import ro.msg.learning.shop.domain.misc.strategy.StrategySelectionAlgorithm;
+import ro.msg.learning.shop.utility.strategy.GreedyAlgorithm;
+import ro.msg.learning.shop.utility.strategy.MostAbundantAlgorithm;
+import ro.msg.learning.shop.utility.strategy.SingleLocationAlgorithm;
+import ro.msg.learning.shop.utility.strategy.StrategySelectionAlgorithm;
 import ro.msg.learning.shop.domain.tables.Location;
 import ro.msg.learning.shop.domain.tables.Product;
 import ro.msg.learning.shop.domain.tables.Stock;
@@ -77,12 +77,15 @@ public class StockService {
         updateStock(location,product,-quantity);
     }
 
+    public void exportStock(int locationId, int productId, int quantity){
+        exportStock(shopService.getLocation(locationId), shopService.getProduct(productId),quantity);
+    }
+
     /*
         Selection Strategy
 
         Runs a distribution algorithm based on property 'shop.stock.strategy'
             from the application.properties file
-
      */
     public List<ResolvedOrderDetail> getStrategy(OrderSpecifications currentOrderSpecifications){
 
@@ -104,6 +107,11 @@ public class StockService {
             default: strategy = new SingleLocationAlgorithm();
         }
         return strategy.runStrategy(currentOrderSpecifications, shopService, this );
+    }
+
+    public void updateStockForResolvedOrderDetails(List<ResolvedOrderDetail> orderResolution){
+        orderResolution.forEach(resolvedOrderDetail -> exportStock(resolvedOrderDetail.getLocationId(), resolvedOrderDetail.getProductId(), resolvedOrderDetail.getQuantity()));
+
     }
 
 }

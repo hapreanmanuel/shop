@@ -1,4 +1,4 @@
-package ro.msg.learning.shop.domain.misc.strategy;
+package ro.msg.learning.shop.utility.strategy;
 
 import ro.msg.learning.shop.domain.misc.OrderSpecifications;
 import ro.msg.learning.shop.domain.misc.ResolvedOrderDetail;

@@ -30,8 +30,10 @@ public class ShopService {
 
     //Customers
     public Customer getCustomer(int customerId){return customerRepository.findOne(customerId);}
+    public Customer getCustomerByUserame(String customerUsername){return customerRepository.findByUserName(customerUsername); }
     public List<Customer> getAllCustomers() { return customerRepository.findAll(); }
     public void addCustomer(Customer customer) { customerRepository.save(customer);}
+    public void deleteCustomer(int customerId) {customerRepository.delete(customerId);}
 
     //Location
     public Location getLocation(int locationId) {return locationRepository.findOne(locationId);}

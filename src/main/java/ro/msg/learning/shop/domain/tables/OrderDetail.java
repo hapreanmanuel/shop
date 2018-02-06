@@ -5,6 +5,7 @@ import ro.msg.learning.shop.domain.misc.OrderDetailKey;
 
 import javax.persistence.*;
 
+@NoArgsConstructor
 @Entity(name="OrderDetail")
 @Data
 @Table(name="ORDER_DETAIL")
@@ -16,19 +17,24 @@ public class OrderDetail {
     @Column(name="QUANTITY")
     private int quantity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="ORDERID",referencedColumnName = "ORDERID",insertable = false,updatable = false)
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="PRODUCTID",referencedColumnName = "PRODUCTID",insertable = false,updatable = false)
     private Product product;
 
-    //Constructor used when creating a new order detail
-    public OrderDetail(Order order, Product product) {
-        this.order = order;
-        this.product = product;
-        this.orderDetailKey = new OrderDetailKey(order.getOrderId(),product.getProductId());
+    public OrderDetail(OrderDetailKey orderDetailKey){
+        this.orderDetailKey=orderDetailKey;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderDetail{" +
+                "orderDetailKey=" + orderDetailKey +
+                ", quantity=" + quantity +
+                '}';
     }
 }
 
