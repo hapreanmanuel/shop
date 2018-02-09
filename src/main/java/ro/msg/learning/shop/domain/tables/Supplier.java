@@ -15,7 +15,7 @@ public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="SUPPLIERID")
-    private int supplierId;                         //PK
+    private int supplierId;
 
     @Column(name="NAME", unique = true)
     private String name;

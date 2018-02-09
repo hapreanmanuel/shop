@@ -7,15 +7,25 @@ import ro.msg.learning.shop.repository.*;
 
 import java.util.List;
 
+/*
+    This class handles basic repository access for the shop (CRUD operations)
+    Entities handled by ShopService:
+        - customers
+        - locations
+        - product categories
+        - products
+        - suppliers
+ */
 @Service
 public class ShopService {
 
-    private @Autowired CustomerRepository customerRepository;
-    private @Autowired LocationRepository locationRepository;
-    private @Autowired ProductCategoryRepository productCategoryRepository ;
-    private @Autowired ProductRepository productRepository;
-    private @Autowired SupplierRepository supplierRepository;
+    private final CustomerRepository customerRepository;
+    private final LocationRepository locationRepository;
+    private final ProductCategoryRepository productCategoryRepository ;
+    private final ProductRepository productRepository;
+    private final SupplierRepository supplierRepository;
 
+    @Autowired
     public ShopService(CustomerRepository customerRepository, LocationRepository locationRepository, ProductCategoryRepository productCategoryRepository, ProductRepository productRepository, SupplierRepository supplierRepository){
         this.customerRepository = customerRepository;
         this.locationRepository = locationRepository;
@@ -27,7 +37,6 @@ public class ShopService {
     /*
         Repository access
      */
-
     //Customers
     public Customer getCustomer(int customerId){return customerRepository.findOne(customerId);}
     public Customer getCustomerByUserame(String customerUsername){return customerRepository.findByUserName(customerUsername); }
@@ -58,6 +67,5 @@ public class ShopService {
     public List<Supplier> getAllSuppliers() { return supplierRepository.findAll(); }
     public void addSupplier(Supplier supplier) { supplierRepository.save(supplier);}
     public void deleteSupplier(Supplier supplier) { supplierRepository.delete(supplier);}
-
 
 }

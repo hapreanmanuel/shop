@@ -8,6 +8,7 @@ import javax.persistence.Embeddable;
 @Data
 @Embeddable
 public class Address {
+
     @Column(name="ADDRESS")
     private String fullAddress;
 
@@ -19,4 +20,11 @@ public class Address {
 
     @Column(name="REGION")
     private String region;
+
+    public Address() {
+        this.fullAddress="";
+        this.country="";
+        this.city="";
+        this.region="";
+    }
 }

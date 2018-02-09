@@ -5,6 +5,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import ro.msg.learning.shop.domain.misc.Address;
@@ -12,22 +13,21 @@ import ro.msg.learning.shop.domain.misc.OrderSpecifications;
 import ro.msg.learning.shop.domain.misc.ShoppingCartEntry;
 import ro.msg.learning.shop.domain.tables.*;
 import ro.msg.learning.shop.service.*;
+import ro.msg.learning.shop.utility.strategy.StrategyConfiguration;
 
 import java.math.BigDecimal;
-
 
 @ComponentScan
 @PropertySource(value={"classpath:application.properties"})
 @SpringBootApplication
+@Import(StrategyConfiguration.class)
 public class ShopApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ShopApplication.class, args);
 	}
-
-
-
 }
+
+
 
 /*
 	Add some entries to the database
@@ -36,13 +36,11 @@ public class ShopApplication {
 class AddMockDataToDatabase implements CommandLineRunner {
 
 	//Service classes ref
-	@Autowired
-	private ShopService shopService;
-	@Autowired
-	private StockService stockService;
-	@Autowired
-	private OrderService orderService;
+	private final ShopService shopService;
+	private final StockService stockService;
+	private final OrderService orderService;
 
+	@Autowired
 	public AddMockDataToDatabase(ShopService shopService, StockService stockService, OrderService orderService) {
 		this.shopService = shopService;
 		this.stockService = stockService;
@@ -94,16 +92,11 @@ class AddMockDataToDatabase implements CommandLineRunner {
 		int l1Quantity = 100;
 		int l2Quantity = 200;
 
-		shopService.getAllLocations().forEach(location -> {
-			stockService.createStocksForLocation(location);
-			shopService.getAllProducts().forEach(product -> {
-				if(location.equals(l1)) stockService.importStock(location,product ,l1Quantity);
-				else stockService.importStock(location,product ,l2Quantity);
-			});
-		});
+		stockService.createStocksForLocation(l1, l1Quantity );
+		stockService.createStocksForLocation(l2,l2Quantity );
 
 		//Create an order for customer c1
-		OrderSpecifications orderSpecifications = new OrderSpecifications(c1.getCustomerId());
+		OrderSpecifications orderSpecifications = orderService.createBasicOrderSpecificationsForCustomer(c1.getCustomerId());
 
 		//Delivery address
 		Address address = new Address();
@@ -115,8 +108,8 @@ class AddMockDataToDatabase implements CommandLineRunner {
 		orderSpecifications.setAddress(address);
 
 		//Add some products to shopping cart
-		orderSpecifications.addShoppingCartEntry(new ShoppingCartEntry(3, 10));
-		orderSpecifications.addShoppingCartEntry(new ShoppingCartEntry(4,20));
+		orderSpecifications.getShoppingCart().add(new ShoppingCartEntry(3, 10));
+		orderSpecifications.getShoppingCart().add(new ShoppingCartEntry(4,20));
 
 		//Submit the order by calling the order creation method from orderService
 		orderService.createNewOrder(orderSpecifications);
