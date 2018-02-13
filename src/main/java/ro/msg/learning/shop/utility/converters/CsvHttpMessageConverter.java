@@ -6,11 +6,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractGenericHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import ro.msg.learning.shop.exceptions.CsvConvertionException;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+
 
 public class CsvHttpMessageConverter extends AbstractGenericHttpMessageConverter<List>{
 
@@ -20,31 +22,29 @@ public class CsvHttpMessageConverter extends AbstractGenericHttpMessageConverter
         super(new MediaType("text","csv"));
     }
 
-
     @Override
-    protected void writeInternal(List list, Type type, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+    protected void writeInternal(List list, Type type, HttpOutputMessage outputMessage) {
         Type actualType = ((ParameterizedType) type).getActualTypeArguments()[0];
         try{
             converter.toCsv(Class.forName(actualType.getTypeName()), list,outputMessage.getBody());
 
         } catch (Exception e){
-            throw new RuntimeException("Unable to convert to CSV", e);
+            throw new CsvConvertionException();
         }
     }
 
     @Override
-    protected List readInternal(Class<? extends List> clazz, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
+    protected List readInternal(Class<? extends List> clazz, HttpInputMessage inputMessage) throws IOException {
         return converter.fromCsv(clazz, inputMessage.getBody());
     }
 
     @Override
-    public List read(Type type, Class<?> contextClass, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
-                Type actualType = ((ParameterizedType) type).getActualTypeArguments()[0];
+    public List read(Type type, Class contextClass, HttpInputMessage inputMessage) {
+        Type actualType = ((ParameterizedType) type).getActualTypeArguments()[0];
         try{
             return converter.fromCsv(Class.forName(actualType.getTypeName()),inputMessage.getBody());
-
         } catch (Exception e){
-            throw new RuntimeException("Unable to convert to CSV", e);
+            throw new CsvConvertionException();
         }
     }
 

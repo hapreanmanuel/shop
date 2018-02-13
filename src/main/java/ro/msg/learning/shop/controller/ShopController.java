@@ -19,31 +19,37 @@ public class ShopController {
     @Autowired
     private ShopService shopService;
 
-    @GetMapping("/products")
+    @GetMapping(value = "/products",
+                produces = "application/json")
     public @ResponseBody List<Product> getAllProducts(){
         return shopService.getAllProducts();
     }
 
-    @GetMapping("/customers")
+    @GetMapping(value = "/customers",
+                produces = "application/json")
     public @ResponseBody List<Customer> getCustomers() { return shopService.getAllCustomers(); }
 
 
-    @GetMapping("/customers/{customerId}")
+    @GetMapping(value = "/customers/{customerId}",
+                produces = "application/json")
     public @ResponseBody Customer getCustomer(@PathVariable("customerId") int customerId){
         return shopService.getCustomer(customerId);
     }
 
 
-    @GetMapping(value= "/orders/{customerId}/all")
+    @GetMapping(value= "/orders/{customerId}/all",
+                produces = "application/json")
     public @ResponseBody List<Order> getOrdersForCustomer(@PathVariable("customerId") int customerId){
         return shopService.getAllOrdesForCustomer(customerId);
     }
 
     @PostMapping(
             value = "/orders/new",
-            consumes = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = "application/json")
     public @ResponseBody Order createOrder(@RequestBody OrderSpecifications orderSpecifications){
         return shopService.createNewOrder(orderSpecifications);
     }
 
 }
+
