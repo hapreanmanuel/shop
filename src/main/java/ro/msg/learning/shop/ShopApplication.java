@@ -13,14 +13,14 @@ import ro.msg.learning.shop.domain.misc.OrderSpecifications;
 import ro.msg.learning.shop.domain.misc.ShoppingCartEntry;
 import ro.msg.learning.shop.domain.tables.*;
 import ro.msg.learning.shop.service.*;
-import ro.msg.learning.shop.utility.strategy.StrategyConfiguration;
+import ro.msg.learning.shop.configuration.StrategyConfig;
 
 import java.math.BigDecimal;
 
 @ComponentScan
 @PropertySource(value={"classpath:application.properties"})
 @SpringBootApplication
-@Import(StrategyConfiguration.class)
+@Import(StrategyConfig.class)
 public class ShopApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ShopApplication.class, args);

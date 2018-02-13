@@ -28,6 +28,8 @@ public class CsvConverterUtil {
         ObjectWriter writer = mapper.writerFor(pojoClass).with(schema);
 
         writer.writeValuesAsArray(outputStream).writeAll(list);
+
         outputStream.close();
+
     }
 }

@@ -133,7 +133,6 @@ public class StockService implements Injectable{
         orderResolution.forEach(resolvedOrderDetail -> exportStock(resolvedOrderDetail.getLocationId(), resolvedOrderDetail.getProductId(), resolvedOrderDetail.getQuantity()));
     }
 
-    //TODO - is this needed?
     //These entities are created on request and are not persisted in the database
     public List<Stock> getExportStock(Order order){
         List<Stock> exportStocks = new ArrayList<>();
@@ -148,6 +147,5 @@ public class StockService implements Injectable{
         });
         return exportStocks;
     }
-
 
 }
