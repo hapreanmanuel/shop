@@ -6,6 +6,7 @@ import ro.msg.learning.shop.domain.misc.StockKey;
 
 import javax.persistence.*;
 
+
 @NoArgsConstructor
 @Data
 @Entity(name="Stock")
@@ -15,23 +16,23 @@ public class Stock {
     @EmbeddedId
     private StockKey stockKey;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="PRODUCTID",referencedColumnName = "PRODUCTID",insertable = false,updatable = false)
     private Product product;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="LOCATIONID",referencedColumnName = "LOCATIONID",insertable = false,updatable = false)
     private Location location;
 
     @Column(name="QUANTITY")
     private int quantity;
 
-    //Constructor for stocks
-    public Stock(Location location, Product product){
-        this.location = location;
-        this.product = product;
-        this.quantity = 0;
-        this.stockKey = new StockKey(product.getProductId(), location.getLocationId());
+    //Key field accessors
+    public int getProductId(){
+        return stockKey.getProductId();
+    }
+    public int getLocationId(){
+        return stockKey.getLocationId();
     }
 }
 

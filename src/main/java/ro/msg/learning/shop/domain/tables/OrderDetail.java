@@ -1,5 +1,6 @@
 package ro.msg.learning.shop.domain.tables;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import ro.msg.learning.shop.domain.misc.OrderDetailKey;
 
@@ -17,6 +18,7 @@ public class OrderDetail {
     @Column(name="QUANTITY")
     private int quantity;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="ORDERID",referencedColumnName = "ORDERID",insertable = false,updatable = false)
     private Order order;
