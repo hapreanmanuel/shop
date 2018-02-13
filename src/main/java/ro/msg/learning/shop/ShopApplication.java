@@ -29,6 +29,8 @@ public class ShopApplication {
 
 
 
+
+
 /*
 	Add some entries to the database
  */
@@ -37,14 +39,13 @@ class AddMockDataToDatabase implements CommandLineRunner {
 
 	//Service classes ref
 	private final ShopService shopService;
+
 	private final StockService stockService;
-	private final OrderService orderService;
 
 	@Autowired
-	public AddMockDataToDatabase(ShopService shopService, StockService stockService, OrderService orderService) {
+	public AddMockDataToDatabase(ShopService shopService, StockService stockService) {
 		this.shopService = shopService;
 		this.stockService = stockService;
-		this.orderService = orderService;
 	}
 
 	@Override
@@ -61,7 +62,7 @@ class AddMockDataToDatabase implements CommandLineRunner {
 		Location l1 = new Location(); l1.setName("Main Location");l1.setAddress(new Address()); l1.getAddress().setFullAddress("Str. Dorobantilor 77"); l1.getAddress().setCity("Cluj-Napoca"); l1.getAddress().setRegion("CJ");l1.getAddress().setCountry("Romania");
 		Location l2 = new Location(); l2.setName("Secondary Location");l2.setAddress(new Address()); l2.getAddress().setFullAddress("Str. Traian 23B7"); l2.getAddress().setCity("Bucuresti"); l2.getAddress().setRegion("B");l2.getAddress().setCountry("Romania");
 
-		shopService.addLocation(l1); shopService.addLocation(l2);
+		stockService.addLocation(l1); stockService.addLocation(l2);
 
 		//Product categories
 		ProductCategory pc1 = new ProductCategory(); pc1.setName("Gadgets");pc1.setDescription("We sell top quality electronic accessories!");
@@ -77,7 +78,7 @@ class AddMockDataToDatabase implements CommandLineRunner {
 		Supplier s4 = new Supplier(); s4. setName("Intel");
 		Supplier s5 = new Supplier(); s5.setName("Jay Electronics");
 
-		shopService.addSupplier(s1);shopService.addSupplier(s2);shopService.addSupplier(s3);shopService.addSupplier(s4);shopService.addSupplier(s5);
+		stockService.addSupplier(s1);stockService.addSupplier(s2);stockService.addSupplier(s3);stockService.addSupplier(s4);stockService.addSupplier(s5);
 
 		//Products
 		Product p1 = new Product(); p1.setCategory(pc1);p1.setName("FLR214-222");p1.setDescription("Ultra professional flashlight");p1.setSupplier(s5);p1.setPrice(BigDecimal.valueOf(10));p1.setWeight(0.3);
@@ -96,7 +97,7 @@ class AddMockDataToDatabase implements CommandLineRunner {
 		stockService.createStocksForLocation(l2,l2Quantity );
 
 		//Create an order for customer c1
-		OrderSpecifications orderSpecifications = orderService.createBasicOrderSpecificationsForCustomer(c1.getCustomerId());
+		OrderSpecifications orderSpecifications = shopService.createBasicOrderSpecificationsForCustomer(c1.getCustomerId());
 
 		//Delivery address
 		Address address = new Address();
@@ -112,7 +113,7 @@ class AddMockDataToDatabase implements CommandLineRunner {
 		orderSpecifications.getShoppingCart().add(new ShoppingCartEntry(4,20));
 
 		//Submit the order by calling the order creation method from orderService
-		orderService.createNewOrder(orderSpecifications);
+		shopService.createNewOrder(orderSpecifications);
 
 	}
 }

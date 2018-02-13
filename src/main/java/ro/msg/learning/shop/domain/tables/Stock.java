@@ -6,6 +6,7 @@ import ro.msg.learning.shop.domain.misc.StockKey;
 
 import javax.persistence.*;
 
+
 @NoArgsConstructor
 @Data
 @Entity(name="Stock")

@@ -14,7 +14,6 @@ import ro.msg.learning.shop.domain.tables.OrderDetail;
 import ro.msg.learning.shop.exceptions.EmptyShoppingCartException;
 import ro.msg.learning.shop.exceptions.InvalidLocationException;
 import ro.msg.learning.shop.exceptions.NoSuitableStrategyException;
-import ro.msg.learning.shop.service.OrderService;
 import ro.msg.learning.shop.service.ShopService;
 import ro.msg.learning.shop.service.StockService;
 
@@ -26,8 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class OrderOperatinonsTests {
 
-    @Autowired
-    private OrderService orderService;
     @Autowired
     private ShopService shopService;
     @Autowired
@@ -48,9 +45,8 @@ public class OrderOperatinonsTests {
 
         /*
             Create an OrderSpecifications object (single input for order creation)
-
          */
-        OrderSpecifications orderSpecifications = orderService.createBasicOrderSpecificationsForCustomer(dummyCustomer.getCustomerId());
+        OrderSpecifications orderSpecifications = shopService.createBasicOrderSpecificationsForCustomer(dummyCustomer.getCustomerId());
 
         //Delivery address
         Address dummyDevileryAddress = new Address();
@@ -68,12 +64,12 @@ public class OrderOperatinonsTests {
         orderSpecifications.getShoppingCart().add(sh2);
 
         //Submit the order by calling the order creation method from orderService
-        Order dummyOrder = orderService.createNewOrder(orderSpecifications);
+        Order dummyOrder = shopService.createNewOrder(orderSpecifications);
 
         /*
             Checkpoints
          */
-        assertThat(orderService.getAllOrders()).isNotEmpty();   //The order should be findable by the service
+        assertThat(shopService.getAllOrders()).isNotEmpty();   //The order should be findable by the service
         //Check if the stock has been updated for the first product
         assertThat(stockService.findStock(dummyOrder.getLocation().getLocationId(), 1).getQuantity()).isEqualTo(90);
         //Check if the stock has been updated for the second product
@@ -84,7 +80,7 @@ public class OrderOperatinonsTests {
 
 
         //Check if orderDetails are persisted as well
-        List<OrderDetail> dummyOrderDetails = orderService.getAllDetailsForOrder(dummyOrder.getOrderId());
+        List<OrderDetail> dummyOrderDetails = shopService.getAllDetailsForOrder(dummyOrder.getOrderId());
 
         assertThat(dummyOrderDetails).size().isEqualTo(2);  // we added two product requests
 
@@ -107,12 +103,12 @@ public class OrderOperatinonsTests {
         address.setRegion("CJ");
         address.setFullAddress("");
 
-        OrderSpecifications orderSpecifications = orderService.createBasicOrderSpecificationsForCustomer(1);
+        OrderSpecifications orderSpecifications = shopService.createBasicOrderSpecificationsForCustomer(1);
         orderSpecifications.setAddress(address);
 
         //Should throw an 'invalid shippment location' exception
         try{
-            orderService.createNewOrder(orderSpecifications);
+            shopService.createNewOrder(orderSpecifications);
         }catch(Exception e) {
             assertThat(e.getMessage()).isEqualTo(new InvalidLocationException().getMessage());
         }
@@ -125,7 +121,7 @@ public class OrderOperatinonsTests {
 
         //Should throw an 'empty shopping cart' exception
         try{
-            orderService.createNewOrder(orderSpecifications);
+            shopService.createNewOrder(orderSpecifications);
         }catch(Exception e) {
             assertThat(e.getMessage()).isEqualTo(new EmptyShoppingCartException().getMessage());
         }
@@ -134,7 +130,7 @@ public class OrderOperatinonsTests {
 
         //Should throw an 'no suitable strategy' exception
         try{
-            orderService.createNewOrder(orderSpecifications);
+            shopService.createNewOrder(orderSpecifications);
         }catch(Exception e) {
             assertThat(e.getMessage()).isEqualTo(new NoSuitableStrategyException().getMessage());
         }

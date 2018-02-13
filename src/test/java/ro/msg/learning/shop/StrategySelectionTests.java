@@ -3,7 +3,6 @@ package ro.msg.learning.shop;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -11,14 +10,9 @@ import ro.msg.learning.shop.domain.misc.Address;
 import ro.msg.learning.shop.domain.misc.OrderSpecifications;
 import ro.msg.learning.shop.domain.misc.ResolvedOrderDetail;
 import ro.msg.learning.shop.domain.misc.ShoppingCartEntry;
-import ro.msg.learning.shop.exceptions.EmptyShoppingCartException;
-import ro.msg.learning.shop.exceptions.InvalidLocationException;
-import ro.msg.learning.shop.exceptions.NoSuitableStrategyException;
-import ro.msg.learning.shop.service.OrderService;
 import ro.msg.learning.shop.service.ShopService;
 import ro.msg.learning.shop.service.StockService;
 
-import javax.validation.constraints.AssertTrue;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,9 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StrategySelectionTests {
-
-    @Autowired
-    private OrderService orderService;
 
     @Autowired
     private StockService stockService;
@@ -66,7 +57,7 @@ public class StrategySelectionTests {
 
         //Specification for an order for the first customer
         //This order should be possible from the first location
-        OrderSpecifications orderSpecifications1 = orderService.createBasicOrderSpecificationsForCustomer(1);
+        OrderSpecifications orderSpecifications1 = shopService.createBasicOrderSpecificationsForCustomer(1);
         orderSpecifications1.setAddress(address);
         orderSpecifications1.getShoppingCart().add(new ShoppingCartEntry(1,10));
         orderSpecifications1.getShoppingCart().add(new ShoppingCartEntry(2,25));

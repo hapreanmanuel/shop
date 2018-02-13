@@ -5,38 +5,85 @@ import org.springframework.stereotype.Service;
 import ro.msg.learning.shop.domain.misc.OrderSpecifications;
 import ro.msg.learning.shop.domain.misc.ResolvedOrderDetail;
 import ro.msg.learning.shop.domain.misc.StockKey;
-import ro.msg.learning.shop.domain.tables.Order;
+import ro.msg.learning.shop.domain.tables.*;
 import ro.msg.learning.shop.exceptions.StockForLocationExistsException;
+import ro.msg.learning.shop.repository.LocationRepository;
+import ro.msg.learning.shop.repository.SupplierRepository;
+import ro.msg.learning.shop.utility.BeansManager;
 import ro.msg.learning.shop.utility.strategy.*;
-import ro.msg.learning.shop.domain.tables.Location;
-import ro.msg.learning.shop.domain.tables.Product;
-import ro.msg.learning.shop.domain.tables.Stock;
 import ro.msg.learning.shop.repository.StockRepository;
 
 import java.util.*;
 
 @Service
-public class StockService {
+public class StockService implements Injectable{
 
     private final StockRepository stockRepository;
-
-    private final ShopService shopService;
-
+    private final SupplierRepository supplierRepository;
+    private final LocationRepository locationRepository;
     private final StrategySelectionAlgorithm algorithm;
 
+    private ShopService shopService;
+
     @Autowired
-    public StockService(StockRepository stockRepository, ShopService shopService, StrategySelectionAlgorithm algorithm){
+    public StockService(StockRepository stockRepository,
+                        SupplierRepository supplierRepository,
+                        LocationRepository locationRepository,
+                        StrategySelectionAlgorithm algorithm){
         this.stockRepository=stockRepository;
-        this.shopService=shopService;
+        this.supplierRepository = supplierRepository;
+        this.locationRepository = locationRepository;
         this.algorithm=algorithm;
     }
+
+    @Override
+    public void inject(BeansManager beansManager) {
+        this.shopService = beansManager.getShopService();
+    }
+
+    /*
+        Repository access
+     */
+    //Location
+    public Location getLocation(int locationId) {return locationRepository.findOne(locationId);}
+    public List<Location> getAllLocations() { return locationRepository.findAll();}
+    public void addLocation(Location location) { locationRepository.save(location);}
+    public void deleteLocation(Location location) { locationRepository.delete(location);}
+
+    //Supplier
+    public Supplier getSupplier(int supplierId){return supplierRepository.findOne(supplierId);}
+    public List<Supplier> getAllSuppliers() { return supplierRepository.findAll(); }
+    public void addSupplier(Supplier supplier) { supplierRepository.save(supplier);}
+    public void deleteSupplier(Supplier supplier) { supplierRepository.delete(supplier);}
+
+    //Stocks
+    public List<Stock> getStocksForLocation(int locationId){ return stockRepository.findByStockKey_LocationId(locationId);}
+    public List<Stock> getStocksForProduct(int productId) {return stockRepository.findByStockKey_ProductId(productId);}
+    public Stock findStock(int locationId, int productId){
+        return stockRepository.findByStockKey_LocationIdAndStockKey_ProductId(locationId,productId);
+    }
+
+    //Create empty stocks for all products for a location
+    public void createEmptyStocksForLocation(Location location){
+        shopService.getAllProducts().forEach(product -> createStock(location,product, 0));
+    }
+
+    //Create stocks with quantity for all products for a location
+    public void createStocksForLocation(Location location, int quantity){
+        shopService.getAllProducts().forEach(product -> createStock(location,product ,quantity ));
+    }
+
+    //Import stock
+    public void importStock(int locationId, int productId, int quantity) {
+        updateStock(locationId,productId,quantity);
+    }
+
 
     /*
         Private section
      */
     private List<Stock> getStocks(){return stockRepository.findAll();}
 
-    //Create stock for location
     private void createStock(Location location, Product product, int quantity){
 
         //Throw exceptions if location or product ref. are wrong.
@@ -59,33 +106,6 @@ public class StockService {
         stockRepository.save(stockToUpdate);
     }
 
-
-    /*
-        Public section
-     */
-    public List<Stock> getStocksForLocation(int locationId){ return stockRepository.findByStockKey_LocationId(locationId);}
-
-    public List<Stock> getStocksForProduct(int productId) {return stockRepository.findByStockKey_ProductId(productId);}
-
-    public Stock findStock(int locationId, int productId){
-        return stockRepository.findByStockKey_LocationIdAndStockKey_ProductId(locationId,productId);
-    }
-
-    //Create empty stocks for all products for a location
-    public void createEmptyStocksForLocation(Location location){
-        shopService.getAllProducts().forEach(product -> createStock(location,product, 0));
-    }
-
-    //Create stocks with quantity for all products for a location
-    public void createStocksForLocation(Location location, int quantity){
-        shopService.getAllProducts().forEach(product -> createStock(location,product ,quantity ));
-    }
-
-    //Import stock
-    public void importStock(int locationId, int productId, int quantity) {
-        updateStock(locationId,productId,quantity);
-    }
-
     //Export stock
     private void exportStock(int locationId, int productId, int quantity){
         updateStock(locationId,productId,-quantity);
@@ -97,6 +117,7 @@ public class StockService {
         return stockMap;
     }
 
+
     /*
         Selection Strategy
 
@@ -105,7 +126,7 @@ public class StockService {
      */
 
     public List<ResolvedOrderDetail> getStrategy(OrderSpecifications currentOrderSpecifications){
-        return algorithm.runStrategy(currentOrderSpecifications, shopService.getAllLocations(), stocksAsMap());
+        return algorithm.runStrategy(currentOrderSpecifications, getAllLocations(), stocksAsMap());
     }
 
     public void updateStockForResolvedOrderDetails(List<ResolvedOrderDetail> orderResolution){
@@ -127,5 +148,6 @@ public class StockService {
         });
         return exportStocks;
     }
+
 
 }

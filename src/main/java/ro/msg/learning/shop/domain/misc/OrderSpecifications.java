@@ -7,12 +7,9 @@ package ro.msg.learning.shop.domain.misc;
  */
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.sql.Timestamp;
 import java.util.List;
 
-@NoArgsConstructor
 @Data
 public class OrderSpecifications {
 
@@ -20,8 +17,12 @@ public class OrderSpecifications {
 
     private List<ShoppingCartEntry> shoppingCart;
 
-    private Timestamp orderCreationTimestamp;
+    private final Timestamp orderCreationTimestamp;
 
     private Address address;
+
+    public OrderSpecifications(){
+        orderCreationTimestamp = new Timestamp(System.currentTimeMillis());
+    }
 }
 

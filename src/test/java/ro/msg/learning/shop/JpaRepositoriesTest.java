@@ -34,7 +34,7 @@ public class JpaRepositoriesTest {
     @Test
     public void stockRepositoryTest(){
 
-        List<Location>  allLocations = shopService.getAllLocations();
+        List<Location>  allLocations = stockService.getAllLocations();
         List<Product>   allProducts = shopService.getAllProducts();
 
         List<Stock> stockLoc1 = stockService.getStocksForLocation(1);
