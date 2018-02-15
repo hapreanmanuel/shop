@@ -21,7 +21,6 @@ import java.util.Map;
 public class SingleLocationAlgorithm implements StrategySelectionAlgorithm{
     @Override
     public List<ResolvedOrderDetail> runStrategy(OrderSpecifications orderSpecifications, List<Location> locationList, Map<StockKey, Stock> stockMap) {
-        List<ResolvedOrderDetail> resultList = new ArrayList<>();
 
         //For each location, find if there are enough products to fully satisfy the order requirements
         for(Location location: locationList){
@@ -38,10 +37,9 @@ public class SingleLocationAlgorithm implements StrategySelectionAlgorithm{
 
             //Check if candidate list is a valid solution
             if(candidate.stream().noneMatch(resolvedOrderDetail -> (resolvedOrderDetail.getQuantity() < 0))){
-                resultList = candidate;
-                return resultList;
+                return candidate;
             }
         }
-        return resultList;
+        return new ArrayList<>();
     }
 }
