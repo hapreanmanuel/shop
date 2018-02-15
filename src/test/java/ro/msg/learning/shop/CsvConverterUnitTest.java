@@ -6,11 +6,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.test.context.junit4.SpringRunner;
-import ro.msg.learning.shop.domain.misc.StockKey;
-import ro.msg.learning.shop.domain.tables.Stock;
-import ro.msg.learning.shop.utility.converters.CsvConverterUtil;
-import ro.msg.learning.shop.utility.converters.CsvHttpMessageConverter;
+import ro.msg.learning.shop.domain.StockKey;
+import ro.msg.learning.shop.domain.Stock;
+import ro.msg.learning.shop.utility.converter.CsvConverterUtil;
+import ro.msg.learning.shop.utility.converter.CsvHttpMessageConverter;
 
 import java.util.List;
 
@@ -26,8 +28,6 @@ public class CsvConverterUnitTest {
 
     private List<Stock> targetStocks;
 
-    private CsvConverterUtil converter = new CsvConverterUtil();
-
     @Test
     public void toCsv(){
         Stock s1 = new Stock(); s1.setStockKey(new StockKey(1,1)); s1.setQuantity(10);
@@ -39,9 +39,23 @@ public class CsvConverterUnitTest {
     }
 
     @Test
+    public void fromCsv(){
+
+    }
+
+    @Test
     public void printMediaTypeToString(){
 
         System.out.println(new MediaType("text", "csv").toString());
+
+    }
+
+    @Test
+    public void httpMessageExceptionToString(){
+        //Not readable
+        System.out.println(new HttpMessageNotReadableException("Could not read CSV").toString());
+        //Not writabale
+        System.out.println(new HttpMessageNotWritableException("Could not write CSV").toString());
 
     }
 

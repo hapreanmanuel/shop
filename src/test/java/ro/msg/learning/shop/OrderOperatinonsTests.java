@@ -5,15 +5,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import ro.msg.learning.shop.domain.misc.Address;
-import ro.msg.learning.shop.domain.misc.OrderSpecifications;
-import ro.msg.learning.shop.domain.misc.ShoppingCartEntry;
-import ro.msg.learning.shop.domain.tables.Customer;
-import ro.msg.learning.shop.domain.tables.Order;
-import ro.msg.learning.shop.domain.tables.OrderDetail;
-import ro.msg.learning.shop.exceptions.EmptyShoppingCartException;
-import ro.msg.learning.shop.exceptions.InvalidLocationException;
-import ro.msg.learning.shop.exceptions.NoSuitableStrategyException;
+import ro.msg.learning.shop.domain.Address;
+import ro.msg.learning.shop.dto.OrderSpecifications;
+import ro.msg.learning.shop.dto.ShoppingCartEntry;
+import ro.msg.learning.shop.domain.Customer;
+import ro.msg.learning.shop.domain.Order;
+import ro.msg.learning.shop.domain.OrderDetail;
+import ro.msg.learning.shop.exception.EmptyShoppingCartException;
+import ro.msg.learning.shop.exception.InvalidLocationException;
+import ro.msg.learning.shop.exception.NoSuitableStrategyException;
 import ro.msg.learning.shop.service.ShopService;
 import ro.msg.learning.shop.service.StockService;
 
@@ -49,7 +49,7 @@ public class OrderOperatinonsTests {
         OrderSpecifications orderSpecifications = shopService.createBasicOrderSpecificationsForCustomer(dummyCustomer.getCustomerId());
 
         //Delivery address
-        Address dummyDevileryAddress = new Address();
+        Address dummyDevileryAddress = Address.builder().build();
         dummyDevileryAddress.setCity("Cluj-Napoca");
         dummyDevileryAddress.setCountry("Romania");
         dummyDevileryAddress.setRegion("CJ");
@@ -97,7 +97,7 @@ public class OrderOperatinonsTests {
          */
 
         //Shipment address
-        Address address = new Address();
+        Address address = Address.builder().build();
         address.setCity("Cluj-Napoca");
         address.setCountry("Romania");
         address.setRegion("CJ");

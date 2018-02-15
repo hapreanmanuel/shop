@@ -1,14 +1,13 @@
-package ro.msg.learning.shop.domain.tables;
+package ro.msg.learning.shop.domain;
 
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
-import ro.msg.learning.shop.domain.misc.Address;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Entity(name="Order")
+@Entity
 @Data
 @Table(name="order_table")                      //Changed table name from 'order' to 'order_table'
 public class Order {
@@ -16,20 +15,20 @@ public class Order {
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="ORDERID")
     private int orderId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="LOCATIONID")
+    @ManyToOne
     private Location location;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="CUSTOMERID")
+    @ManyToOne
     private Customer customer;
 
     @OneToMany(mappedBy = "order")
     private List<OrderDetail> orderDetails;
 
+    @Embedded
     private Address shippingAddress;
+
+
 
 }

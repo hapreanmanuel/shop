@@ -3,8 +3,8 @@ package ro.msg.learning.shop.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ro.msg.learning.shop.domain.misc.StockJson;
-import ro.msg.learning.shop.domain.tables.Location;
+import ro.msg.learning.shop.dto.StockJson;
+import ro.msg.learning.shop.domain.Location;
 import ro.msg.learning.shop.service.ShopService;
 import ro.msg.learning.shop.service.StockService;
 
@@ -14,11 +14,15 @@ import java.util.List;
 @RequestMapping("/stock")
 public class StockController {
 
-    @Autowired
     private StockService stockService;
 
-    @Autowired
     private ShopService shopService;
+
+    @Autowired
+    public StockController(StockService stockService, ShopService shopService) {
+        this.stockService = stockService;
+        this.shopService = shopService;
+    }
 
     @GetMapping(value = "/locations",
                 produces = "application/json")

@@ -1,12 +1,11 @@
-package ro.msg.learning.shop.domain.tables;
+package ro.msg.learning.shop.domain;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Entity(name="Supplier")
+@NoArgsConstructor
+@Entity
 @Data
 @Table(name="Supplier")
 public class Supplier {
@@ -14,10 +13,14 @@ public class Supplier {
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="SUPPLIERID")
     private int supplierId;
 
-    @Column(name="NAME", unique = true)
+    @Column(unique = true)
     private String name;
+
+    @Builder
+    public Supplier(String name) {
+        this.name = name;
+    }
 }
 

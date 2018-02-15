@@ -1,28 +1,31 @@
-package ro.msg.learning.shop.domain.tables;
+package ro.msg.learning.shop.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
-import ro.msg.learning.shop.domain.misc.Address;
+import lombok.*;
 
 import javax.persistence.*;
 
+@NoArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Entity(name="Location")
+@Entity
 @Data
 @Table(name="Location")
 public class Location {
 
     @Setter(AccessLevel.NONE)
     @Id
-    @Column(name="LOCATIONID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int locationId;
 
-    @Column(name="NAME", unique=true)
+    @Column(unique=true)
     private String name;
 
+    @Embedded
     private Address address;
 
+    @Builder
+    public Location(String name, Address address) {
+        this.name = name;
+        this.address = address;
+    }
 }

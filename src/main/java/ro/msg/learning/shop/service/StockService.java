@@ -2,11 +2,9 @@ package ro.msg.learning.shop.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ro.msg.learning.shop.domain.misc.OrderSpecifications;
-import ro.msg.learning.shop.domain.misc.ResolvedOrderDetail;
-import ro.msg.learning.shop.domain.misc.StockKey;
-import ro.msg.learning.shop.domain.tables.*;
-import ro.msg.learning.shop.exceptions.StockForLocationExistsException;
+import ro.msg.learning.shop.domain.*;
+import ro.msg.learning.shop.dto.OrderSpecifications;
+import ro.msg.learning.shop.dto.ResolvedOrderDetail;
 import ro.msg.learning.shop.repository.LocationRepository;
 import ro.msg.learning.shop.repository.SupplierRepository;
 import ro.msg.learning.shop.utility.BeansManager;
@@ -86,10 +84,9 @@ public class StockService implements Injectable{
 
     private void createStock(Location location, Product product, int quantity){
 
-        //Throw exceptions if location or product ref. are wrong.
+        //Throw exception if location or product ref. are wrong.
 
         //Throw exception if the stock already exists because the method to use should be 'updateStock'
-        if(findStock(location.getLocationId(),product.getProductId()) != null) throw new StockForLocationExistsException();
 
         Stock stockToCreate = new Stock();
         stockToCreate.setStockKey(new StockKey(product.getProductId(), location.getLocationId()));
