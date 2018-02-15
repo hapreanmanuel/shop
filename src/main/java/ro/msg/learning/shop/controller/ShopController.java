@@ -3,8 +3,10 @@ package ro.msg.learning.shop.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ro.msg.learning.shop.domain.misc.OrderSpecifications;
-import ro.msg.learning.shop.domain.tables.*;
+import ro.msg.learning.shop.domain.Customer;
+import ro.msg.learning.shop.domain.Order;
+import ro.msg.learning.shop.dto.OrderSpecifications;
+import ro.msg.learning.shop.domain.Product;
 import ro.msg.learning.shop.service.ShopService;
 
 import java.util.List;

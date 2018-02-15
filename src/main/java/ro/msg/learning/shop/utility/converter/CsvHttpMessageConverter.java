@@ -1,10 +1,10 @@
-package ro.msg.learning.shop.utility.converters;
+package ro.msg.learning.shop.utility.converter;
 
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractGenericHttpMessageConverter;
-import ro.msg.learning.shop.exceptions.CsvConvertionException;
+import ro.msg.learning.shop.exception.CsvConvertionException;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;

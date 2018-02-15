@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import ro.msg.learning.shop.exceptions.NoSuitableStrategyException;
+import ro.msg.learning.shop.exception.NoSuitableStrategyException;
 import ro.msg.learning.shop.utility.strategy.GreedyAlgorithm;
 import ro.msg.learning.shop.utility.strategy.MostAbundantAlgorithm;
 import ro.msg.learning.shop.utility.strategy.SingleLocationAlgorithm;

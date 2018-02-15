@@ -1,12 +1,12 @@
-package ro.msg.learning.shop.exceptions;
+package ro.msg.learning.shop.exception;
 
 public class NoSuitableStrategyException extends RuntimeException {
 
-    private static final String message = "Insufficient products in stock";
+    private static final String MESSAGE = "Insufficient products in stock";
 
     @Override
     public String getMessage(){
-        return message;
+        return MESSAGE;
     }
 
     public NoSuitableStrategyException(){

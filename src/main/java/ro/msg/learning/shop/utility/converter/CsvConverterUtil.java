@@ -1,4 +1,4 @@
-package ro.msg.learning.shop.utility.converters;
+package ro.msg.learning.shop.utility.converter;
 
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectWriter;

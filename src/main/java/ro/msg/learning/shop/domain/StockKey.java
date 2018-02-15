@@ -1,4 +1,4 @@
-package ro.msg.learning.shop.domain.misc;
+package ro.msg.learning.shop.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,9 +12,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 @Embeddable
-public class OrderDetailKey implements Serializable {
-    @Column(name="ORDERID")
-    private int orderId;
+public class StockKey implements Serializable {
     @Column(name="PRODUCTID")
     private int productId;
+    @Column(name="LOCATIONID")
+    private int locationId;
 }

@@ -2,14 +2,12 @@ package ro.msg.learning.shop.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ro.msg.learning.shop.domain.misc.Address;
-import ro.msg.learning.shop.domain.misc.OrderDetailKey;
-import ro.msg.learning.shop.domain.misc.OrderSpecifications;
-import ro.msg.learning.shop.domain.misc.ResolvedOrderDetail;
-import ro.msg.learning.shop.domain.tables.*;
-import ro.msg.learning.shop.exceptions.EmptyShoppingCartException;
-import ro.msg.learning.shop.exceptions.InvalidLocationException;
-import ro.msg.learning.shop.exceptions.NoSuitableStrategyException;
+import ro.msg.learning.shop.domain.*;
+import ro.msg.learning.shop.dto.OrderSpecifications;
+import ro.msg.learning.shop.dto.ResolvedOrderDetail;
+import ro.msg.learning.shop.exception.EmptyShoppingCartException;
+import ro.msg.learning.shop.exception.InvalidLocationException;
+import ro.msg.learning.shop.exception.NoSuitableStrategyException;
 import ro.msg.learning.shop.repository.*;
 import ro.msg.learning.shop.utility.BeansManager;
 

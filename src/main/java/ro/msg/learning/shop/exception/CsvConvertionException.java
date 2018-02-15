@@ -1,8 +1,8 @@
-package ro.msg.learning.shop.exceptions;
+package ro.msg.learning.shop.exception;
 
 public class CsvConvertionException extends RuntimeException {
 
-    private static final String message = "Unable to convert to CSV";
+    private static final String MESSAGE = "Unable to convert to CSV";
 
     private static final long serialVersionUID = 1L;
 
@@ -20,7 +20,7 @@ public class CsvConvertionException extends RuntimeException {
 
     @Override
     public String getMessage(){
-        return message;
+        return MESSAGE;
     }
 
 }

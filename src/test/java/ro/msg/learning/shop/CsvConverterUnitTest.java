@@ -7,10 +7,10 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
-import ro.msg.learning.shop.domain.misc.StockKey;
-import ro.msg.learning.shop.domain.tables.Stock;
-import ro.msg.learning.shop.utility.converters.CsvConverterUtil;
-import ro.msg.learning.shop.utility.converters.CsvHttpMessageConverter;
+import ro.msg.learning.shop.domain.StockKey;
+import ro.msg.learning.shop.domain.Stock;
+import ro.msg.learning.shop.utility.converter.CsvConverterUtil;
+import ro.msg.learning.shop.utility.converter.CsvHttpMessageConverter;
 
 import java.util.List;
 
@@ -35,6 +35,11 @@ public class CsvConverterUnitTest {
         Stock s3 = new Stock(); s1.setStockKey(new StockKey(3,1)); s1.setQuantity(30);
 
         targetStocks.add(s1); targetStocks.add(s2); targetStocks.add(s3);
+
+    }
+
+    @Test
+    public void fromCsv(){
 
     }
 

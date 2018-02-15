@@ -1,4 +1,4 @@
-package ro.msg.learning.shop.domain.misc;
+package ro.msg.learning.shop.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

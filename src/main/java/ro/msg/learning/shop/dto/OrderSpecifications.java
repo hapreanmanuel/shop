@@ -1,4 +1,4 @@
-package ro.msg.learning.shop.domain.misc;
+package ro.msg.learning.shop.dto;
 
 /*
     This class is used as an argument for the OrderService method 'createNewOrder'
@@ -7,6 +7,8 @@ package ro.msg.learning.shop.domain.misc;
  */
 
 import lombok.Data;
+import ro.msg.learning.shop.domain.Address;
+
 import java.sql.Timestamp;
 import java.util.List;
 

@@ -1,10 +1,10 @@
 package ro.msg.learning.shop.utility.strategy;
 
-import ro.msg.learning.shop.domain.misc.OrderSpecifications;
-import ro.msg.learning.shop.domain.misc.ResolvedOrderDetail;
-import ro.msg.learning.shop.domain.misc.StockKey;
-import ro.msg.learning.shop.domain.tables.Location;
-import ro.msg.learning.shop.domain.tables.Stock;
+import ro.msg.learning.shop.dto.OrderSpecifications;
+import ro.msg.learning.shop.dto.ResolvedOrderDetail;
+import ro.msg.learning.shop.domain.StockKey;
+import ro.msg.learning.shop.domain.Location;
+import ro.msg.learning.shop.domain.Stock;
 
 import java.util.List;
 import java.util.Map;

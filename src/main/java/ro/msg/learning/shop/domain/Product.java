@@ -1,4 +1,4 @@
-package ro.msg.learning.shop.domain.tables;
+package ro.msg.learning.shop.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AccessLevel;
@@ -8,8 +8,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
+@Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Entity(name="Product")
 @Data
 @Table(name="Product")
 public class Product {
@@ -17,26 +17,22 @@ public class Product {
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="PRODUCTID")
     private int productId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name="CATEGORYID")
     private ProductCategory category;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name="SUPPLIERID")
     private Supplier supplier;
 
-    @Column(name="NAME",unique=true)
+    @Column(unique=true)
     private String name;
 
-    @Column(name="DESCRIPTION")
     private String description;
 
-    @Column(name="PRICE")
     private BigDecimal price;
 
-    @Column(name="WEIGHT")
     private double weight;
 }
