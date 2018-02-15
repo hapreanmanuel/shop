@@ -7,7 +7,6 @@ import org.springframework.http.converter.AbstractGenericHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
-import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -31,7 +30,7 @@ public class CsvHttpMessageConverter extends AbstractGenericHttpMessageConverter
     }
 
     @Override
-    protected List readInternal(Class<? extends List> clazz, HttpInputMessage inputMessage) throws IOException {
+    protected List readInternal(Class<? extends List> clazz, HttpInputMessage inputMessage) {
         try{
             return CsvConverterUtil.fromCsv(clazz, inputMessage.getBody());
         } catch (Exception e){
@@ -40,7 +39,7 @@ public class CsvHttpMessageConverter extends AbstractGenericHttpMessageConverter
     }
 
     @Override
-    public List read(Type type, Class contextClass, HttpInputMessage inputMessage) {
+    public List read(Type type, Class contextClass, HttpInputMessage inputMessage){
         Type actualType = ((ParameterizedType) type).getActualTypeArguments()[0];
         try{
             return CsvConverterUtil.fromCsv(Class.forName(actualType.getTypeName()),inputMessage.getBody());

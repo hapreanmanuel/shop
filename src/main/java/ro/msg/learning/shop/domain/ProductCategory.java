@@ -1,11 +1,10 @@
 package ro.msg.learning.shop.domain;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
+@NoArgsConstructor
 @Entity
 @Data
 @Table(name="PRODUCTCATEGORY")
@@ -21,4 +20,9 @@ public class ProductCategory {
 
     private String description;
 
+    @Builder
+    public ProductCategory(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

@@ -49,7 +49,7 @@ public class StrategySelectionTests {
     public void singleStrategyTestSuite(){
 
         //Shipment address
-        Address address = new Address();
+        Address address = Address.builder().build();
         address.setCity("Cluj-Napoca");
         address.setCountry("Romania");
         address.setRegion("CJ");

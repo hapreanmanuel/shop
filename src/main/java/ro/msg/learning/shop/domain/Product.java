@@ -1,13 +1,14 @@
 package ro.msg.learning.shop.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Data
@@ -30,9 +31,11 @@ public class Product {
     @Column(unique=true)
     private String name;
 
-    private String description;
+    @Builder.Default
+    private String description = "";
 
     private BigDecimal price;
 
     private double weight;
+
 }

@@ -1,11 +1,10 @@
 package ro.msg.learning.shop.domain;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
+@NoArgsConstructor
 @Entity
 @Data
 @Table(name="Supplier")
@@ -18,5 +17,10 @@ public class Supplier {
 
     @Column(unique = true)
     private String name;
+
+    @Builder
+    public Supplier(String name) {
+        this.name = name;
+    }
 }
 

@@ -109,7 +109,7 @@ public class ShopService implements Injectable{
         OrderSpecifications basicOrderSpecifications = new OrderSpecifications();
 
         basicOrderSpecifications.setCustomerId(customerId);
-        basicOrderSpecifications.setAddress(new Address());
+        basicOrderSpecifications.setAddress(Address.builder().build());
         basicOrderSpecifications.setShoppingCart(new ArrayList<>());
 
         return basicOrderSpecifications;

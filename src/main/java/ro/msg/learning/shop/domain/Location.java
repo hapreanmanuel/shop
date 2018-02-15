@@ -1,12 +1,11 @@
 package ro.msg.learning.shop.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
+@NoArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Data
@@ -24,4 +23,9 @@ public class Location {
     @Embedded
     private Address address;
 
+    @Builder
+    public Location(String name, Address address) {
+        this.name = name;
+        this.address = address;
+    }
 }

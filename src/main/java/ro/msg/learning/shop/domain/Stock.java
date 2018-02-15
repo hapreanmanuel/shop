@@ -1,12 +1,16 @@
 package ro.msg.learning.shop.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity
 @Data
 @Table(name="STOCK")
 public class Stock {

@@ -49,7 +49,7 @@ public class OrderOperatinonsTests {
         OrderSpecifications orderSpecifications = shopService.createBasicOrderSpecificationsForCustomer(dummyCustomer.getCustomerId());
 
         //Delivery address
-        Address dummyDevileryAddress = new Address();
+        Address dummyDevileryAddress = Address.builder().build();
         dummyDevileryAddress.setCity("Cluj-Napoca");
         dummyDevileryAddress.setCountry("Romania");
         dummyDevileryAddress.setRegion("CJ");
@@ -97,7 +97,7 @@ public class OrderOperatinonsTests {
          */
 
         //Shipment address
-        Address address = new Address();
+        Address address = Address.builder().build();
         address.setCity("Cluj-Napoca");
         address.setCountry("Romania");
         address.setRegion("CJ");

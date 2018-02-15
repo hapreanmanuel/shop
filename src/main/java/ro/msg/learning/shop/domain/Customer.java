@@ -1,11 +1,10 @@
 package ro.msg.learning.shop.domain;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
+@NoArgsConstructor              //Needed by JPA
 @Entity
 @Data
 @Table(name="Customer")
@@ -23,4 +22,11 @@ public class Customer {
     @Column(unique = true)
     private String userName;
 
+    //Constructor based builder to exclude the option of including 'customerId' when building
+    @Builder
+    public Customer(String firstName, String lastName, String userName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.userName = userName;
+    }
 }

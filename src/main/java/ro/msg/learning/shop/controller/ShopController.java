@@ -18,8 +18,12 @@ import java.util.List;
 @RequestMapping("/shop")
 public class ShopController {
 
-    @Autowired
     private ShopService shopService;
+
+    @Autowired
+    public ShopController(ShopService shopService) {
+        this.shopService = shopService;
+    }
 
     @GetMapping(value = "/products",
                 produces = "application/json")

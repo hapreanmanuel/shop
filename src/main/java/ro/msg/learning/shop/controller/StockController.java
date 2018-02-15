@@ -14,11 +14,15 @@ import java.util.List;
 @RequestMapping("/stock")
 public class StockController {
 
-    @Autowired
     private StockService stockService;
 
-    @Autowired
     private ShopService shopService;
+
+    @Autowired
+    public StockController(StockService stockService, ShopService shopService) {
+        this.stockService = stockService;
+        this.shopService = shopService;
+    }
 
     @GetMapping(value = "/locations",
                 produces = "application/json")
