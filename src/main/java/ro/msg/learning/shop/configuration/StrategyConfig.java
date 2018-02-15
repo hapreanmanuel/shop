@@ -38,7 +38,7 @@ public class StrategyConfig {
         try {
             return algorithmClass.newInstance();
         } catch(Exception e ) {
-            throw new NoSuitableStrategyException("Illegal strategy selection request.", e);
+            throw new NoSuitableStrategyException();
         }
     }
 

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import ro.msg.learning.shop.domain.*;
 import ro.msg.learning.shop.dto.OrderSpecifications;
 import ro.msg.learning.shop.dto.ResolvedOrderDetail;
-import ro.msg.learning.shop.exception.StockForLocationExistsException;
 import ro.msg.learning.shop.repository.LocationRepository;
 import ro.msg.learning.shop.repository.SupplierRepository;
 import ro.msg.learning.shop.utility.BeansManager;
@@ -88,7 +87,6 @@ public class StockService implements Injectable{
         //Throw exception if location or product ref. are wrong.
 
         //Throw exception if the stock already exists because the method to use should be 'updateStock'
-        if(findStock(location.getLocationId(),product.getProductId()) != null) throw new StockForLocationExistsException();
 
         Stock stockToCreate = new Stock();
         stockToCreate.setStockKey(new StockKey(product.getProductId(), location.getLocationId()));

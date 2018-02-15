@@ -50,10 +50,12 @@ public class ShopService implements Injectable{
         this.orderDetailRepository = orderDetailRepository;
 
     }
+
     @Override
     public void inject(BeansManager beansManager) {
         this.stockService = beansManager.getStockService();
     }
+
     /*
         Repository access
      */
