@@ -15,7 +15,6 @@ import java.util.List;
 public class StockController {
 
     private StockService stockService;
-
     private ShopService shopService;
 
     @Autowired

@@ -8,6 +8,7 @@ import ro.msg.learning.shop.domain.Order;
 import ro.msg.learning.shop.dto.OrderSpecifications;
 import ro.msg.learning.shop.domain.Product;
 import ro.msg.learning.shop.service.ShopService;
+import ro.msg.learning.shop.service.StockService;
 
 import java.util.List;
 
@@ -19,10 +20,12 @@ import java.util.List;
 public class ShopController {
 
     private ShopService shopService;
+    private StockService stockService;
 
     @Autowired
-    public ShopController(ShopService shopService) {
+    public ShopController(ShopService shopService, StockService stockService) {
         this.shopService = shopService;
+        this.stockService = stockService;
     }
 
     @GetMapping(value = "/products",
@@ -54,8 +57,14 @@ public class ShopController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = "application/json")
     public @ResponseBody Order createOrder(@RequestBody OrderSpecifications orderSpecifications){
-        return shopService.createNewOrder(orderSpecifications);
-    }
 
+        OrderSpecifications os = stockService.processRequest(orderSpecifications);
+
+        Order newOrder = shopService.createNewOrder(os);
+
+        stockService.updateStockForOrder(newOrder);
+
+        return newOrder;
+    }
 }
 

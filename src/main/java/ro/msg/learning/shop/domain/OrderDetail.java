@@ -3,11 +3,14 @@ package ro.msg.learning.shop.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.*;
 
-@Entity
+@Builder
+@AllArgsConstructor
 @ToString(exclude = {"order", "product"})
 @NoArgsConstructor
+@Entity
 @Data
 @Table(name="ORDER_DETAIL")
 public class OrderDetail {
@@ -29,7 +32,6 @@ public class OrderDetail {
     public OrderDetail(OrderDetailKey orderDetailKey){
         this.orderDetailKey=orderDetailKey;
     }
-
 }
 
 

@@ -7,10 +7,12 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import ro.msg.learning.shop.domain.Address;
 import ro.msg.learning.shop.domain.Customer;
+import ro.msg.learning.shop.domain.Order;
 import ro.msg.learning.shop.dto.OrderSpecifications;
 import ro.msg.learning.shop.dto.ShoppingCartEntry;
 import ro.msg.learning.shop.repository.CustomerRepository;
 import ro.msg.learning.shop.service.ShopService;
+import ro.msg.learning.shop.service.StockService;
 
 /*
      Create a mock order using the 'OrderService' class
@@ -34,15 +36,15 @@ public class CreateMockOrder implements CommandLineRunner, Ordered {
     }
 
     private final ShopService shopService;
+    private final StockService stockService;
     private final CustomerRepository customerRepository;
 
     @Autowired
-    public CreateMockOrder(ShopService shopService, CustomerRepository customerRepository) {
+    public CreateMockOrder(ShopService shopService, CustomerRepository customerRepository,StockService stockService) {
         this.shopService = shopService;
         this.customerRepository = customerRepository;
+        this.stockService = stockService;
     }
-
-
 
     @Override
     public void run(String... args) {
@@ -63,8 +65,15 @@ public class CreateMockOrder implements CommandLineRunner, Ordered {
         orderSpecifications.getShoppingCart().add(new ShoppingCartEntry(3, 10));
         orderSpecifications.getShoppingCart().add(new ShoppingCartEntry(4,20));
 
+        /*
+            Order creation flow
+         */
+        stockService.processRequest(orderSpecifications);
+
         //Submit the order by calling the order creation method from orderService
-        shopService.createNewOrder(orderSpecifications);
+        Order mockOrder = shopService.createNewOrder(orderSpecifications);
+
+        stockService.updateStockForOrder(mockOrder);
     }
 
 

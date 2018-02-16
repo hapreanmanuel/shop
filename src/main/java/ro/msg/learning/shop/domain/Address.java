@@ -28,4 +28,10 @@ public class Address {
     @Builder.Default
     private String region = "";
 
+    public boolean checkIfValid(){
+        return !this.fullAddress.equals("")
+                && !this.country.equals("")
+                && !this.city.equals("")
+                && !this.region.equals("");
+    }
 }
