@@ -9,17 +9,17 @@ import java.util.List;
 
 @AllArgsConstructor
 @Data
-public class StockJson {
+public class StockDto {
     private int productId;
     private int locationId;
     private int quantity;
 
-    private static StockJson fromStock(Stock stock) {
-        return new StockJson(stock.getStockKey().getProductId(), stock.getStockKey().getLocationId(), stock.getQuantity());
+    private static StockDto fromStock(Stock stock) {
+        return new StockDto(stock.getStockKey().getProductId(), stock.getStockKey().getLocationId(), stock.getQuantity());
     }
 
-    public static List<StockJson> fromStockList(List<Stock> stocks) {
-        List<StockJson> out = new ArrayList<>();
+    public static List<StockDto> fromStockList(List<Stock> stocks) {
+        List<StockDto> out = new ArrayList<>();
         for (Stock stock : stocks) {
             out.add(fromStock(stock));
         }
