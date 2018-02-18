@@ -11,10 +11,12 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.test.context.junit4.SpringRunner;
 import ro.msg.learning.shop.domain.StockKey;
 import ro.msg.learning.shop.domain.Stock;
+import ro.msg.learning.shop.dto.StockDto;
 import ro.msg.learning.shop.utility.converter.CsvConverterUtil;
 import ro.msg.learning.shop.utility.converter.CsvHttpMessageConverter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

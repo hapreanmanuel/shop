@@ -4,18 +4,16 @@ import lombok.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ro.msg.learning.shop.domain.Address;
 import ro.msg.learning.shop.domain.Customer;
 
-import javax.annotation.Generated;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.Random;
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
 public class BuilderUnitTest {

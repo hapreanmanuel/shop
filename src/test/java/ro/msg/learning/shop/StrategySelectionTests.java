@@ -63,23 +63,24 @@ public class StrategySelectionTests {
         orderSpecifications1.getShoppingCart().add(new ShoppingCartEntry(2,25));
 
         //Expected to find a suitable strategy in the first location
-        List<ResolvedOrderDetail> slStrategyOrder1 = stockService.getStrategy(orderSpecifications1);
+        stockService.processRequest(orderSpecifications1);
 
-        assertThat(slStrategyOrder1).isNotEmpty();
-        assertThat(slStrategyOrder1.iterator().next().getLocationId()).isEqualTo(1);
+        assertThat(orderSpecifications1.getResolution()).isNotEmpty();
+        assertThat(orderSpecifications1.getResolution().iterator().next().getLocationId()).isEqualTo(1);
 
         //Expected to find a suitable strategy in the second location
         orderSpecifications1.getShoppingCart().add(new ShoppingCartEntry(3,102));
-        List<ResolvedOrderDetail> slStrategyOrder2 = stockService.getStrategy(orderSpecifications1);
 
-        assertThat(slStrategyOrder2).isNotEmpty();
-        assertThat(slStrategyOrder2.iterator().next().getLocationId()).isEqualTo(2);
+        stockService.processRequest(orderSpecifications1);
+
+        assertThat(orderSpecifications1.getResolution()).isNotEmpty();
+        assertThat(orderSpecifications1.getResolution().iterator().next().getLocationId()).isEqualTo(2);
 
         //Should not find a suitable strategy
         orderSpecifications1.getShoppingCart().add(new ShoppingCartEntry(4,202));
-        List<ResolvedOrderDetail> slStrategyOrder3 = stockService.getStrategy(orderSpecifications1);
+        stockService.processRequest(orderSpecifications1);
 
-        assertThat(slStrategyOrder3).isEmpty();
+        assertThat(orderSpecifications1.getResolution()).isEmpty();
 
     }
 
