@@ -45,16 +45,16 @@ public class StockService {
         Repository access
      */
     //Location
-    public Location getLocation(int locationId) {return locationRepository.findOne(locationId);}
+//    public Location getLocation(int locationId) {return locationRepository.findOne(locationId);}
     public List<Location> getAllLocations() { return locationRepository.findAll();}
-    public void addLocation(Location location) { locationRepository.save(location);}
-    public void deleteLocation(Location location) { locationRepository.delete(location);}
-
-    //Supplier
-    public Supplier getSupplier(int supplierId){return supplierRepository.findOne(supplierId);}
-    public List<Supplier> getAllSuppliers() { return supplierRepository.findAll(); }
-    public void addSupplier(Supplier supplier) { supplierRepository.save(supplier);}
-    public void deleteSupplier(Supplier supplier) { supplierRepository.delete(supplier);}
+//    public void addLocation(Location location) { locationRepository.save(location);}
+//    public void deleteLocation(Location location) { locationRepository.delete(location);}
+//
+//    //Supplier
+//    public Supplier getSupplier(int supplierId){return supplierRepository.findOne(supplierId);}
+//    public List<Supplier> getAllSuppliers() { return supplierRepository.findAll(); }
+//    public void addSupplier(Supplier supplier) { supplierRepository.save(supplier);}
+//    public void deleteSupplier(Supplier supplier) { supplierRepository.delete(supplier);}
 
     //Stocks
     public List<Stock> getStocksForLocation(int locationId){ return stockRepository.findByStockKey_LocationId(locationId);}
@@ -78,6 +78,8 @@ public class StockService {
         Runs a distribution algorithm based on property 'shop.strategy'
             from the application.properties file
      */
+
+    @Transactional
     public OrderSpecifications processRequest(OrderSpecifications orderSpecifications){
 
         if(orderSpecifications.getShoppingCart().isEmpty()){
@@ -93,6 +95,7 @@ public class StockService {
         return orderSpecifications;
     }
 
+    @Transactional
     public void updateStockForOrder(Order order){
         order.getOrderDetails().forEach(orderDetail -> exportStock(order.getLocation().getLocationId(),
                 orderDetail.getProduct().getProductId(),

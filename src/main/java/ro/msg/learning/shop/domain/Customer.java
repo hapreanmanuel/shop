@@ -10,23 +10,24 @@ import javax.persistence.*;
 @Table(name="Customer")
 public class Customer {
 
-    @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="CUSTOMERID")
     private int customerId;
+
+ //   @JoinColumn(name="USER_ID", unique = true)
+    @MapsId
+    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
+    private User user;
 
     private String firstName;
 
     private String lastName;
 
-    @Column(unique = true)
-    private String userName;
-
-    //Constructor based builder to exclude the option of including 'customerId' when building
     @Builder
-    public Customer(String firstName, String lastName, String userName) {
+    public Customer(User user, String firstName, String lastName) {
+        this.user = user;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.userName = userName;
     }
 }

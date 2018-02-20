@@ -55,21 +55,11 @@ public class ShopService {
      */
     //Customers
     public Customer getCustomer(int customerId){return customerRepository.findOne(customerId);}
-    public Customer getCustomerByUserame(String customerUsername){return customerRepository.findByUserName(customerUsername); }
-    public List<Customer> getAllCustomers() { return customerRepository.findAll(); }
-    public void addCustomer(Customer customer) { customerRepository.save(customer);}
-    public void deleteCustomer(int customerId) {customerRepository.delete(customerId);}
-
-    //Product category
-    public ProductCategory getProductCategory(int categoryId){return productCategoryRepository.findOne(categoryId);}
-    public List<ProductCategory> getAllProductCategories() {return productCategoryRepository.findAll();}
-    public void addProductCategory(ProductCategory productCategory){productCategoryRepository.save(productCategory);}
-    public void deleteProductCategory(ProductCategory productCategory){productCategoryRepository.delete(productCategory);}
+//    public Customer getCustomerByUserame(String customerUsername){return customerRepository.findByUserName(customerUsername); }
+    public List<Customer> getAllCustomers(){return customerRepository.findAll();}
 
     //Product
     public List<Product> getAllProducts(){return productRepository.findAll();}
-    public void addProduct(Product product){productRepository.save(product);}
-    public void deleteProduct(Product product){productRepository.delete(product);}
 
     /*
         Orders
@@ -149,4 +139,6 @@ public class ShopService {
 
         order.setLocation(locationRepository.findOne(resolvedOrderDetails.iterator().next().getLocationId()));
     }
+
+
 }

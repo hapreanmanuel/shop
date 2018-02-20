@@ -47,9 +47,7 @@ public class CsvConverterUnitTest {
 
     @Test
     public void printMediaTypeToString(){
-
         System.out.println(new MediaType("text", "csv").toString());
-
     }
 
     @Test
@@ -58,7 +56,6 @@ public class CsvConverterUnitTest {
         System.out.println(new HttpMessageNotReadableException("Could not read CSV").toString());
         //Not writabale
         System.out.println(new HttpMessageNotWritableException("Could not write CSV").toString());
-
     }
 
 }

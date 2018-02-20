@@ -74,41 +74,41 @@ public class JpaRepositoriesTest {
     @Test
     public void checkBuilderConsistency(){
 
-        customerRepository.save(Customer.builder()
-                .firstName("Gabi")
-                .lastName("Deen")
-                .userName("prrr2")
-                .build());
-
-        customerRepository.findAll().forEach(customer -> System.out.println(customer.toString()));
+//        customerRepository.save(Customer.builder()
+//                .firstName("Gabi")
+//                .lastName("Deen")
+//                .userName("prrr2")
+//                .build());
+//
+//        customerRepository.findAll().forEach(customer -> System.out.println(customer.toString()));
 
     }
 
     @Test
     public void checkBuilderAndJpaConsistency(){
-        Customer c1 = Customer.builder()
-                .firstName("Gabi")
-                .lastName("Deen")
-                .userName("prrr1")
-                .build();
-        Customer c2 = Customer.builder()
-                .firstName("Gabi")
-                .lastName("Deen")
-                .userName("prrr2")
-                .build();
-        List<Customer> customers = Arrays.asList(c1,c2);
-
-        //Both should have id = 0
-        customers.forEach(customer -> System.out.println(customer.toString()));
-
-    //    assertThat(c1.getCustomerId()).isEqualTo(c2.getCustomerId()).isEqualTo(0);
-
-        customerRepository.save(customers);
-
-        assertThat(c1.getCustomerId()).isNotEqualTo(c2.getCustomerId()).isNotEqualTo(0);
-
-        //After being persisted both should have incremented IDs (and unique)
-        customerRepository.findAll().forEach(customer -> System.out.println(customer.toString()));
+//        Customer c1 = Customer.builder()
+//                .firstName("Gabi")
+//                .lastName("Deen")
+//                .userName("prrr1")
+//                .build();
+//        Customer c2 = Customer.builder()
+//                .firstName("Gabi")
+//                .lastName("Deen")
+//                .userName("prrr2")
+//                .build();
+//        List<Customer> customers = Arrays.asList(c1,c2);
+//
+//        //Both should have id = 0
+//        customers.forEach(customer -> System.out.println(customer.toString()));
+//
+//    //    assertThat(c1.getCustomerId()).isEqualTo(c2.getCustomerId()).isEqualTo(0);
+//
+//        customerRepository.save(customers);
+//
+//        assertThat(c1.getCustomerId()).isNotEqualTo(c2.getCustomerId()).isNotEqualTo(0);
+//
+//        //After being persisted both should have incremented IDs (and unique)
+//        customerRepository.findAll().forEach(customer -> System.out.println(customer.toString()));
     }
 
     @Test
