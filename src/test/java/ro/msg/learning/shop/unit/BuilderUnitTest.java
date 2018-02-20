@@ -62,34 +62,34 @@ public class BuilderUnitTest {
 
         System.out.println(ad.toString());
 
-        //Using Customer class
-        Customer c1 = Customer.builder()//Specific id (should not be possible and generated automatically)
-                .firstName("Mat")
-                .lastName("Rick")
-                .userName("stranger101")
-                .build();
-        Customer c2 = Customer.builder()            //id field has been omited
-                .firstName("SS")
-                .lastName("Patrick")
-                .userName("Master of champions")
-                .build();
-
-        Customer c3 = Customer.builder()            //id field has been omited -> see if incremented
-                .firstName("SS")
-                .lastName("Patrick")
-                .userName("Pro chess player")
-                .build();
-
-        Customer c4 = Customer.builder()            //Nickname allready in use ?
-                .firstName("SS")
-                .lastName("Patrick")
-                .userName("Master of champions")
-                .build();
-
-        System.out.println(c1.toString());
-        System.out.println(c2.toString());
-        System.out.println(c3.toString());
-        System.out.println(c4.toString());
+//        //Using Customer class
+//        Customer c1 = Customer.builder()//Specific id (should not be possible and generated automatically)
+//                .firstName("Mat")
+//                .lastName("Rick")
+//                .userName("stranger101")
+//                .build();
+//        Customer c2 = Customer.builder()            //id field has been omited
+//                .firstName("SS")
+//                .lastName("Patrick")
+//                .userName("Master of champions")
+//                .build();
+//
+//        Customer c3 = Customer.builder()            //id field has been omited -> see if incremented
+//                .firstName("SS")
+//                .lastName("Patrick")
+//                .userName("Pro chess player")
+//                .build();
+//
+//        Customer c4 = Customer.builder()            //Nickname allready in use ?
+//                .firstName("SS")
+//                .lastName("Patrick")
+//                .userName("Master of champions")
+//                .build();
+//
+//        System.out.println(c1.toString());
+//        System.out.println(c2.toString());
+//        System.out.println(c3.toString());
+//        System.out.println(c4.toString());
     }
 
     @Autowired

@@ -3,10 +3,14 @@ package ro.msg.learning.shop.mockdata;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.core.Ordered;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ro.msg.learning.shop.domain.*;
+import ro.msg.learning.shop.dto.OrderSpecifications;
+import ro.msg.learning.shop.dto.ShoppingCartEntry;
 import ro.msg.learning.shop.repository.*;
+import ro.msg.learning.shop.service.ShopService;
+import ro.msg.learning.shop.service.StockService;
 
 
 import java.math.BigDecimal;
@@ -21,11 +25,7 @@ import java.util.List;
 
 */
 @Component
-public class AddMockDataToDatabase implements CommandLineRunner, Ordered {
-    @Override
-    public int getOrder() {
-        return LOWEST_PRECEDENCE-2;
-    }
+public class AddMockDataToDatabase implements CommandLineRunner{
 
     //Work directly on repositories
     private CustomerRepository customerRepository;
@@ -33,44 +33,87 @@ public class AddMockDataToDatabase implements CommandLineRunner, Ordered {
     private ProductCategoryRepository productCategoryRepository;
     private ProductRepository productRepository;
     private SupplierRepository supplierRepository;
+    private AuthorityRepository authorityRepository;
+
+    private final StockService stockService;
+    private final ShopService shopService;
+    private final PasswordEncoder encoder;
+
+    private final List<Integer> stockSizeForLocations = Arrays.asList(100,200);
 
     @Autowired
-    public AddMockDataToDatabase(CustomerRepository customerRepository, LocationRepository locationRepository, ProductCategoryRepository productCategoryRepository, ProductRepository productRepository, SupplierRepository supplierRepository) {
+    public AddMockDataToDatabase(CustomerRepository customerRepository, LocationRepository locationRepository, ProductCategoryRepository productCategoryRepository, ProductRepository productRepository, SupplierRepository supplierRepository, ShopService shopService, StockService stockService, AuthorityRepository authorityRepository, PasswordEncoder encoder) {
         this.customerRepository = customerRepository;
         this.locationRepository = locationRepository;
         this.productCategoryRepository = productCategoryRepository;
         this.productRepository = productRepository;
         this.supplierRepository = supplierRepository;
+        this.shopService=shopService;
+        this.stockService=stockService;
+        this.authorityRepository = authorityRepository;
+        this.encoder = encoder;
     }
 
     @Override
     public void run(String... strings) {
+        initAuthorities();
+        initCustomers();
+        initShop();
+        initStocks();
+        initOrder();
+    }
 
-        //Customers
-        List<Customer> mockCustomers = Arrays.asList(
+    private void initAuthorities(){
+        Arrays.stream(AuthorityType.values()).forEach(authorityType ->  authorityRepository.save(Authority.builder().authorityType(authorityType).build()));
+    }
+
+    private void initCustomers(){
+
+        Authority customerType = authorityRepository.findByAuthorityType(AuthorityType.CUSTOMER);
+
+        List<Customer> customers = Arrays.asList(
                 Customer.builder()
+                        .user(User.builder()
+                                .username("djones223")
+                                .password(encoder.encode("mrwhite"))
+                                .authority(customerType)
+                                .build())
                         .firstName("Davidson")
                         .lastName("Jones")
-                        .userName("djones223")
                         .build(),
                 Customer.builder()
+                        .user(User.builder()
+                                .username("eassociation")
+                                .password(encoder.encode("power"))
+                                .authority(customerType)
+                                .build())
                         .firstName("Electronica")
                         .lastName("Association")
-                        .userName("electrassociation")
                         .build(),
                 Customer.builder()
+                        .user(User.builder()
+                                .username("test")
+                                .password(encoder.encode("test"))
+                                .authority(customerType)
+                                .build())
                         .firstName("Tester")
                         .lastName("")
-                        .userName("testuser")
                         .build(),
                 Customer.builder()
-                        .firstName("dummyFirstName")
-                        .lastName("dummyLastName")
-                        .userName("dummyuser")
+                        .user(User.builder()
+                                .username("dummy")
+                                .password(encoder.encode("dummy"))
+                                .authority(customerType)
+                                .build())
+                        .firstName("Dummy")
+                        .lastName("")
                         .build());
 
-        customerRepository.save(mockCustomers);
+        customerRepository.save(customers);
 
+    }
+
+    private void initShop(){
         //Locations
         List<Location> locations = Arrays.asList(
                 Location.builder()
@@ -176,4 +219,38 @@ public class AddMockDataToDatabase implements CommandLineRunner, Ordered {
 
         productRepository.save(products);
     }
+
+    private void initStocks(){
+        stockService.createStocksForLocation(stockService.getAllLocations().get(0),stockSizeForLocations.get(0));
+        stockService.createStocksForLocation(stockService.getAllLocations().get(1),stockSizeForLocations.get(1));
+    }
+
+    private void initOrder(){
+        final Customer customer = customerRepository.findOne(1);
+
+        //Create an order for customer c1
+        OrderSpecifications orderSpecifications = shopService.createBasicOrderSpecificationsForCustomer(customer.getCustomerId());
+
+        orderSpecifications.setAddress(Address.builder()
+                .fullAddress("Str. Dorobantilor 112B AP6")
+                .city("Cluj-Napoca")
+                .country("Romania")
+                .region("CJ")
+                .build());
+
+        //Add some products to shopping cart
+        orderSpecifications.getShoppingCart().add(new ShoppingCartEntry(3, 10));
+        orderSpecifications.getShoppingCart().add(new ShoppingCartEntry(4,20));
+
+        /*
+            Order creation flow
+         */
+        stockService.processRequest(orderSpecifications);
+
+        //Submit the order by calling the order creation method from orderService
+        Order mockOrder = shopService.createNewOrder(orderSpecifications);
+
+        stockService.updateStockForOrder(mockOrder);
+    }
+
 }

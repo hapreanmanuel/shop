@@ -32,16 +32,16 @@ public class OrderOperatinonsTests {
 
     @Test
     public void getUserByUserName(){
-        Customer dummy = shopService.getCustomerByUserame("dummy");
-        assertThat(dummy).isInstanceOf(Customer.class);
-        System.out.println(dummy.getUserName());
+//        Customer dummy = shopService.getCustomerByUserame("dummy");
+//        assertThat(dummy).isInstanceOf(Customer.class);
+//        System.out.println(dummy.getUserName());
     }
 
     @Test
     public void newOrderCreationTest(){
 
         //Get dummy customer    (entry created by component 'AddMockDataToDatabase')
-        Customer dummyCustomer = shopService.getCustomerByUserame("dummy");
+        Customer dummyCustomer = shopService.getCustomer(1);
 
         /*
             Create an OrderSpecifications object (single input for order creation)
