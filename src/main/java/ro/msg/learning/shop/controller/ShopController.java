@@ -3,9 +3,12 @@ package ro.msg.learning.shop.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ro.msg.learning.shop.domain.misc.OrderSpecifications;
-import ro.msg.learning.shop.domain.tables.*;
+import ro.msg.learning.shop.domain.Customer;
+import ro.msg.learning.shop.domain.Order;
+import ro.msg.learning.shop.dto.OrderSpecifications;
+import ro.msg.learning.shop.domain.Product;
 import ro.msg.learning.shop.service.ShopService;
+import ro.msg.learning.shop.service.StockService;
 
 import java.util.List;
 
@@ -16,8 +19,14 @@ import java.util.List;
 @RequestMapping("/shop")
 public class ShopController {
 
-    @Autowired
     private ShopService shopService;
+    private StockService stockService;
+
+    @Autowired
+    public ShopController(ShopService shopService, StockService stockService) {
+        this.shopService = shopService;
+        this.stockService = stockService;
+    }
 
     @GetMapping(value = "/products",
                 produces = "application/json")
@@ -48,8 +57,14 @@ public class ShopController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = "application/json")
     public @ResponseBody Order createOrder(@RequestBody OrderSpecifications orderSpecifications){
-        return shopService.createNewOrder(orderSpecifications);
-    }
 
+        OrderSpecifications os = stockService.processRequest(orderSpecifications);
+
+        Order newOrder = shopService.createNewOrder(os);
+
+        stockService.updateStockForOrder(newOrder);
+
+        return newOrder;
+    }
 }
 

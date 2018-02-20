@@ -1,15 +1,16 @@
-package ro.msg.learning.shop.domain.tables;
+package ro.msg.learning.shop.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@Entity(name="Product")
 @Data
 @Table(name="Product")
 public class Product {
@@ -17,26 +18,24 @@ public class Product {
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="PRODUCTID")
     private int productId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name="CATEGORYID")
     private ProductCategory category;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name="SUPPLIERID")
     private Supplier supplier;
 
-    @Column(name="NAME",unique=true)
+    @Column(unique=true)
     private String name;
 
-    @Column(name="DESCRIPTION")
-    private String description;
+    @Builder.Default
+    private String description = "";
 
-    @Column(name="PRICE")
     private BigDecimal price;
 
-    @Column(name="WEIGHT")
     private double weight;
+
 }

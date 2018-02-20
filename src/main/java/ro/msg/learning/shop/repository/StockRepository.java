@@ -1,8 +1,8 @@
 package ro.msg.learning.shop.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ro.msg.learning.shop.domain.misc.StockKey;
-import ro.msg.learning.shop.domain.tables.Stock;
+import ro.msg.learning.shop.domain.StockKey;
+import ro.msg.learning.shop.domain.Stock;
 
 import java.util.List;
 

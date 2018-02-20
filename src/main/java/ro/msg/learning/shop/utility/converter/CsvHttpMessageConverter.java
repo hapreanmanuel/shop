@@ -1,4 +1,4 @@
-package ro.msg.learning.shop.utility.converters;
+package ro.msg.learning.shop.utility.converter;
 
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
@@ -6,17 +6,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractGenericHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
-import ro.msg.learning.shop.exceptions.CsvConvertionException;
 
-import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
 
 public class CsvHttpMessageConverter extends AbstractGenericHttpMessageConverter<List>{
-
-    private final CsvConverterUtil converter = new CsvConverterUtil();
 
     public CsvHttpMessageConverter() {
         super(new MediaType("text","csv"));
@@ -26,25 +22,29 @@ public class CsvHttpMessageConverter extends AbstractGenericHttpMessageConverter
     protected void writeInternal(List list, Type type, HttpOutputMessage outputMessage) {
         Type actualType = ((ParameterizedType) type).getActualTypeArguments()[0];
         try{
-            converter.toCsv(Class.forName(actualType.getTypeName()), list,outputMessage.getBody());
+            CsvConverterUtil.toCsv(Class.forName(actualType.getTypeName()), list,outputMessage.getBody());
 
         } catch (Exception e){
-            throw new CsvConvertionException();
+            throw new HttpMessageNotWritableException("Unable to write CSV",e);
         }
     }
 
     @Override
-    protected List readInternal(Class<? extends List> clazz, HttpInputMessage inputMessage) throws IOException {
-        return converter.fromCsv(clazz, inputMessage.getBody());
+    protected List readInternal(Class<? extends List> clazz, HttpInputMessage inputMessage) {
+        try{
+            return CsvConverterUtil.fromCsv(clazz, inputMessage.getBody());
+        } catch (Exception e){
+            throw new HttpMessageNotReadableException("Unable to read CSV", e);
+        }
     }
 
     @Override
-    public List read(Type type, Class contextClass, HttpInputMessage inputMessage) {
+    public List read(Type type, Class contextClass, HttpInputMessage inputMessage){
         Type actualType = ((ParameterizedType) type).getActualTypeArguments()[0];
         try{
-            return converter.fromCsv(Class.forName(actualType.getTypeName()),inputMessage.getBody());
+            return CsvConverterUtil.fromCsv(Class.forName(actualType.getTypeName()),inputMessage.getBody());
         } catch (Exception e){
-            throw new CsvConvertionException();
+            throw new HttpMessageNotReadableException("Unable to read CSV", e);
         }
     }
 

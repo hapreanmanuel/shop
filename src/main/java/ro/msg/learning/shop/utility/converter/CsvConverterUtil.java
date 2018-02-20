@@ -1,4 +1,4 @@
-package ro.msg.learning.shop.utility.converters;
+package ro.msg.learning.shop.utility.converter;
 
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -10,9 +10,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-public class CsvConverterUtil {
+public abstract class CsvConverterUtil {
 
-    public List fromCsv(Class pojoClass, InputStream inputStream) throws IOException {
+    private CsvConverterUtil(){}          //Private constructor to hide implicit public constructor
+
+    protected static List fromCsv(Class pojoClass, InputStream inputStream) throws IOException {
         CsvMapper mapper = new CsvMapper();
         CsvSchema schema = mapper.schemaFor(pojoClass).withHeader();
 
@@ -21,7 +23,7 @@ public class CsvConverterUtil {
         return iterator.readAll();
     }
 
-    public void toCsv(Class pojoClass, List list, OutputStream outputStream) throws IOException{
+    protected static void toCsv(Class pojoClass, List list, OutputStream outputStream) throws IOException{
         CsvMapper mapper = new CsvMapper();
         CsvSchema schema = mapper.schemaFor(pojoClass).withHeader().withColumnReordering(false);
 

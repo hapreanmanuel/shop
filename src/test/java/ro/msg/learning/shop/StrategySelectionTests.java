@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit4.SpringRunner;
-import ro.msg.learning.shop.domain.misc.Address;
-import ro.msg.learning.shop.domain.misc.OrderSpecifications;
-import ro.msg.learning.shop.domain.misc.ResolvedOrderDetail;
-import ro.msg.learning.shop.domain.misc.ShoppingCartEntry;
+import ro.msg.learning.shop.domain.Address;
+import ro.msg.learning.shop.dto.OrderSpecifications;
+import ro.msg.learning.shop.dto.ResolvedOrderDetail;
+import ro.msg.learning.shop.dto.ShoppingCartEntry;
 import ro.msg.learning.shop.service.ShopService;
 import ro.msg.learning.shop.service.StockService;
 
@@ -49,7 +49,7 @@ public class StrategySelectionTests {
     public void singleStrategyTestSuite(){
 
         //Shipment address
-        Address address = new Address();
+        Address address = Address.builder().build();
         address.setCity("Cluj-Napoca");
         address.setCountry("Romania");
         address.setRegion("CJ");
@@ -63,23 +63,24 @@ public class StrategySelectionTests {
         orderSpecifications1.getShoppingCart().add(new ShoppingCartEntry(2,25));
 
         //Expected to find a suitable strategy in the first location
-        List<ResolvedOrderDetail> slStrategyOrder1 = stockService.getStrategy(orderSpecifications1);
+        stockService.processRequest(orderSpecifications1);
 
-        assertThat(slStrategyOrder1).isNotEmpty();
-        assertThat(slStrategyOrder1.iterator().next().getLocationId()).isEqualTo(1);
+        assertThat(orderSpecifications1.getResolution()).isNotEmpty();
+        assertThat(orderSpecifications1.getResolution().iterator().next().getLocationId()).isEqualTo(1);
 
         //Expected to find a suitable strategy in the second location
         orderSpecifications1.getShoppingCart().add(new ShoppingCartEntry(3,102));
-        List<ResolvedOrderDetail> slStrategyOrder2 = stockService.getStrategy(orderSpecifications1);
 
-        assertThat(slStrategyOrder2).isNotEmpty();
-        assertThat(slStrategyOrder2.iterator().next().getLocationId()).isEqualTo(2);
+        stockService.processRequest(orderSpecifications1);
+
+        assertThat(orderSpecifications1.getResolution()).isNotEmpty();
+        assertThat(orderSpecifications1.getResolution().iterator().next().getLocationId()).isEqualTo(2);
 
         //Should not find a suitable strategy
         orderSpecifications1.getShoppingCart().add(new ShoppingCartEntry(4,202));
-        List<ResolvedOrderDetail> slStrategyOrder3 = stockService.getStrategy(orderSpecifications1);
+        stockService.processRequest(orderSpecifications1);
 
-        assertThat(slStrategyOrder3).isEmpty();
+        assertThat(orderSpecifications1.getResolution()).isEmpty();
 
     }
 

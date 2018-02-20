@@ -2,17 +2,14 @@ package ro.msg.learning.shop.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ro.msg.learning.shop.domain.misc.Address;
-import ro.msg.learning.shop.domain.misc.OrderDetailKey;
-import ro.msg.learning.shop.domain.misc.OrderSpecifications;
-import ro.msg.learning.shop.domain.misc.ResolvedOrderDetail;
-import ro.msg.learning.shop.domain.tables.*;
-import ro.msg.learning.shop.exceptions.EmptyShoppingCartException;
-import ro.msg.learning.shop.exceptions.InvalidLocationException;
-import ro.msg.learning.shop.exceptions.NoSuitableStrategyException;
+import ro.msg.learning.shop.domain.*;
+import ro.msg.learning.shop.dto.OrderSpecifications;
+import ro.msg.learning.shop.dto.ResolvedOrderDetail;
+import ro.msg.learning.shop.exception.InvalidLocationException;
+import ro.msg.learning.shop.exception.NoSuitableStrategyException;
 import ro.msg.learning.shop.repository.*;
-import ro.msg.learning.shop.utility.BeansManager;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +24,7 @@ import java.util.stream.Collectors;
         - suppliers
  */
 @Service
-public class ShopService implements Injectable{
+public class ShopService {
 
     //Repositories
     private final CustomerRepository customerRepository;
@@ -35,27 +32,24 @@ public class ShopService implements Injectable{
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
-
-    //TODO - remove stock service
-    private StockService stockService;
+    private final LocationRepository locationRepository;
 
     @Autowired
     public ShopService(CustomerRepository customerRepository,
                        ProductCategoryRepository productCategoryRepository,
                        ProductRepository productRepository,
                        OrderRepository orderRepository,
-                       OrderDetailRepository orderDetailRepository){
+                       OrderDetailRepository orderDetailRepository,
+                       LocationRepository locationRepository){
         this.customerRepository = customerRepository;
         this.productCategoryRepository = productCategoryRepository;
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
         this.orderDetailRepository = orderDetailRepository;
+        this.locationRepository = locationRepository;
 
     }
-    @Override
-    public void inject(BeansManager beansManager) {
-        this.stockService = beansManager.getStockService();
-    }
+
     /*
         Repository access
      */
@@ -73,7 +67,6 @@ public class ShopService implements Injectable{
     public void deleteProductCategory(ProductCategory productCategory){productCategoryRepository.delete(productCategory);}
 
     //Product
-    public Product getProduct(int productId){return productRepository.findOne(productId);}
     public List<Product> getAllProducts(){return productRepository.findAll();}
     public void addProduct(Product product){productRepository.save(product);}
     public void deleteProduct(Product product){productRepository.delete(product);}
@@ -81,18 +74,15 @@ public class ShopService implements Injectable{
     /*
         Orders
      */
-
     public Order getOrder(int orderId){return orderRepository.findOne(orderId);}
     public List<Order> getAllOrders(){return orderRepository.findAll();}
     public List<Order> getAllOrdesForCustomer(int customerId){
-        return getAllOrders().stream().filter(order -> (order.getCustomer().getCustomerId()==customerId)).collect(Collectors.toList());
+        return orderRepository.findByCustomer_CustomerId(customerId);
     }
-    private void addOrder(Order order){orderRepository.save(order);}
-    private void updateOrder(Order order){orderRepository.save(order);}
 
     //Orderdetails
-    private void addOrderDetail(OrderDetail orderDetail){ orderDetailRepository.save(orderDetail);}
-    private void addOrderDetails(List<OrderDetail> orderDetails){orderDetails.forEach(this::addOrderDetail);}
+//    private void addOrderDetail(OrderDetail orderDetail){ orderDetailRepository.save(orderDetail);}
+//    private void addOrderDetails(List<OrderDetail> orderDetails){orderDetails.forEach(this::addOrderDetail);}
     public List<OrderDetail> getAllDetailsForOrder(int orderId){return orderDetailRepository.findByOrderDetailKey_OrderId(orderId); }
 
 /*•	You get a single java object as input. This object will contain the order timestamp, the delivery address and a list of products (product ID and quantity) contained in the order.
@@ -105,32 +95,26 @@ public class ShopService implements Injectable{
 */
 
     public OrderSpecifications createBasicOrderSpecificationsForCustomer(int customerId){
-
-        OrderSpecifications basicOrderSpecifications = new OrderSpecifications();
-
-        basicOrderSpecifications.setCustomerId(customerId);
-        basicOrderSpecifications.setAddress(new Address());
-        basicOrderSpecifications.setShoppingCart(new ArrayList<>());
-
-        return basicOrderSpecifications;
+        return OrderSpecifications.builder()
+                .customerId(customerId)
+                .shoppingCart(new ArrayList<>())
+                .address(Address.builder().build())
+                .build();
     }
 
+    //This method should be called after the order specifications have been processed -> resolution is not empty
+    @Transactional
     public Order createNewOrder(OrderSpecifications orderSpecifications){
 
         /*
-            Check order creation specifications validity
+           Check specifications validity
          */
-        //TODO - invalid location examination- some method to check if an address is valid
-        if(orderSpecifications.getAddress().getFullAddress().equals("")) throw new InvalidLocationException();
-        if(orderSpecifications.getShoppingCart().isEmpty()) throw new EmptyShoppingCartException();
-
-        /*
-            Run selection strategy
-         */
-        List<ResolvedOrderDetail> resolvedOrderDetails= stockService.getStrategy(orderSpecifications);
-
-        //Check that there is a solution for the order requests
-        if(resolvedOrderDetails.isEmpty()) throw new NoSuitableStrategyException();
+        if(!orderSpecifications.getAddress().checkIfValid()){
+            throw new InvalidLocationException();
+        }
+        if(orderSpecifications.getResolution().isEmpty()) {
+            throw new NoSuitableStrategyException();
+        }
 
         /*
             Create a new order
@@ -141,44 +125,28 @@ public class ShopService implements Injectable{
         newOrder.setCustomer(getCustomer(orderSpecifications.getCustomerId()));
         newOrder.setShippingAddress(orderSpecifications.getAddress());
 
-        //Save the order to db
-        addOrder(newOrder);
+        //Save order -> this step is needed to get a compliant ID for the order
+        orderRepository.save(newOrder);
 
-        addOrderDetailsToOrder(resolvedOrderDetails, newOrder);
+        //Set order details
+        addDetailsToOrder(orderSpecifications.getResolution(), newOrder);
 
-        /*
-            Export stocks
-            (?) maybe this should be in a different class
-         */
-        //TODO - move logic to stock service class where income statistics are being performed
-        // -> maybe via an Aspect class
-        //UpdateStocks
-        stockService.updateStockForResolvedOrderDetails(resolvedOrderDetails);
+        //Persist with order details added
+        orderRepository.save(newOrder);
 
         return newOrder;
     }
 
-    private void addOrderDetailsToOrder(List<ResolvedOrderDetail> resolvedOrderDetails, Order order){
+    @Transactional
+    private void addDetailsToOrder(List<ResolvedOrderDetail> resolvedOrderDetails, Order order){
+        List<OrderDetail> details = resolvedOrderDetails.stream().map(resolvedOrderDetail-> OrderDetail.builder()
+                .order(order)
+                .product(productRepository.findOne(resolvedOrderDetail.getProductId()))
+                .quantity(resolvedOrderDetail.getQuantity())
+                .orderDetailKey(new OrderDetailKey(order.getOrderId(),resolvedOrderDetail.getProductId()))
+                .build()).collect(Collectors.toList());
+        order.setOrderDetails(details);
 
-        List<OrderDetail> orderDetails = new ArrayList<>();
-        resolvedOrderDetails.forEach(resolvedOrderDetail ->{
-            OrderDetail orderDetail = new OrderDetail(new OrderDetailKey(order.getOrderId(), resolvedOrderDetail.getProductId()));
-            orderDetail.setQuantity(resolvedOrderDetail.getQuantity());
-            orderDetail.setProduct(getProduct(resolvedOrderDetail.getProductId()));
-            orderDetail.setOrder(order);
-            orderDetails.add(orderDetail);
-        });
-
-        addOrderDetails(orderDetails);
-
-        order.setOrderDetails(orderDetails);
-
-        //Set shipment location
-        order.setLocation(stockService.getLocation(resolvedOrderDetails.iterator().next().getLocationId()));
-
-        //Update order (order details added after the actual order to the db)
-        updateOrder(order);
+        order.setLocation(locationRepository.findOne(resolvedOrderDetails.iterator().next().getLocationId()));
     }
-
-
 }
