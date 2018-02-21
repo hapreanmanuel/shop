@@ -3,6 +3,7 @@ package ro.msg.learning.shop.mockdata;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ro.msg.learning.shop.domain.*;
@@ -13,6 +14,7 @@ import ro.msg.learning.shop.service.ShopService;
 import ro.msg.learning.shop.service.StockService;
 
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -24,8 +26,12 @@ import java.util.List;
 	- uses JpaRepositories directly
 
 */
+
+
 @Component
 public class AddMockDataToDatabase implements CommandLineRunner{
+
+    private ApplicationContext applicationContext;
 
     //Work directly on repositories
     private CustomerRepository customerRepository;
@@ -34,33 +40,39 @@ public class AddMockDataToDatabase implements CommandLineRunner{
     private ProductRepository productRepository;
     private SupplierRepository supplierRepository;
     private AuthorityRepository authorityRepository;
-
-    private final StockService stockService;
-    private final ShopService shopService;
-    private final PasswordEncoder encoder;
+    private StockService stockService;
+    private ShopService shopService;
+    private PasswordEncoder encoder;
 
     private final List<Integer> stockSizeForLocations = Arrays.asList(100,200);
 
     @Autowired
-    public AddMockDataToDatabase(CustomerRepository customerRepository, LocationRepository locationRepository, ProductCategoryRepository productCategoryRepository, ProductRepository productRepository, SupplierRepository supplierRepository, ShopService shopService, StockService stockService, AuthorityRepository authorityRepository, PasswordEncoder encoder) {
-        this.customerRepository = customerRepository;
-        this.locationRepository = locationRepository;
-        this.productCategoryRepository = productCategoryRepository;
-        this.productRepository = productRepository;
-        this.supplierRepository = supplierRepository;
-        this.shopService=shopService;
-        this.stockService=stockService;
-        this.authorityRepository = authorityRepository;
-        this.encoder = encoder;
+    public AddMockDataToDatabase(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    //Get beans
+    @PostConstruct
+    private void init(){
+        this.customerRepository = applicationContext.getBean(CustomerRepository.class);
+        this.locationRepository = applicationContext.getBean(LocationRepository.class);
+        this.productCategoryRepository = applicationContext.getBean(ProductCategoryRepository.class);
+        this.productRepository = applicationContext.getBean(ProductRepository.class);
+        this.supplierRepository = applicationContext.getBean(SupplierRepository.class);
+        this.authorityRepository = applicationContext.getBean(AuthorityRepository.class);
+        this.shopService= applicationContext.getBean(ShopService.class);
+        this.stockService= applicationContext.getBean(StockService.class);
+        this.encoder = applicationContext.getBean(PasswordEncoder.class);
     }
 
     @Override
     public void run(String... strings) {
-        initAuthorities();
-        initCustomers();
-        initShop();
-        initStocks();
-        initOrder();
+
+//        initAuthorities();
+//        initCustomers();
+//        initShop();
+//        initStocks();
+//        initOrder();
     }
 
     private void initAuthorities(){
@@ -242,9 +254,6 @@ public class AddMockDataToDatabase implements CommandLineRunner{
         orderSpecifications.getShoppingCart().add(new ShoppingCartEntry(3, 10));
         orderSpecifications.getShoppingCart().add(new ShoppingCartEntry(4,20));
 
-        /*
-            Order creation flow
-         */
         stockService.processRequest(orderSpecifications);
 
         //Submit the order by calling the order creation method from orderService
@@ -252,5 +261,4 @@ public class AddMockDataToDatabase implements CommandLineRunner{
 
         stockService.updateStockForOrder(mockOrder);
     }
-
 }

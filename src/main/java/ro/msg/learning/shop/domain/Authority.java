@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Table(name = "AUTHORITY")
 @Data
 @Entity
-public class Authority{
+public class    Authority{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "AUTHORITY_ID")
