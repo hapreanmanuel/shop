@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import ro.msg.learning.shop.domain.Address;
 import ro.msg.learning.shop.domain.Location;
-import ro.msg.learning.shop.exception.NoSuitableStrategyException;
+import ro.msg.learning.shop.exception.InvalidRequestException;
 
 import java.util.*;
 
@@ -34,7 +34,7 @@ public class DistanceCalculator {
 
         } catch (Exception e){
             log.error("Error while getting DistanceMatrix. ", e);
-            throw new NoSuitableStrategyException();
+            throw new InvalidRequestException();
         }
     }
 
