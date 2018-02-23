@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.msg.learning.shop.domain.*;
 import ro.msg.learning.shop.dto.OrderSpecifications;
-import ro.msg.learning.shop.dto.ResolvedOrderDetail;
+import ro.msg.learning.shop.dto.StrategyDto;
 import ro.msg.learning.shop.exception.EmptyShoppingCartException;
 import ro.msg.learning.shop.exception.InvalidProductException;
 import ro.msg.learning.shop.exception.InvalidShopLocationException;
@@ -45,16 +45,7 @@ public class StockService {
         Repository access
      */
     //Location
-//    public Location getLocation(int locationId) {return locationRepository.findOne(locationId);}
     public List<Location> getAllLocations() { return locationRepository.findAll();}
-//    public void addLocation(Location location) { locationRepository.save(location);}
-//    public void deleteLocation(Location location) { locationRepository.delete(location);}
-//
-//    //Supplier
-//    public Supplier getSupplier(int supplierId){return supplierRepository.findOne(supplierId);}
-//    public List<Supplier> getAllSuppliers() { return supplierRepository.findAll(); }
-//    public void addSupplier(Supplier supplier) { supplierRepository.save(supplier);}
-//    public void deleteSupplier(Supplier supplier) { supplierRepository.delete(supplier);}
 
     //Stocks
     public List<Stock> getStocksForLocation(int locationId){ return stockRepository.findByStockKey_LocationId(locationId);}
@@ -89,7 +80,7 @@ public class StockService {
             Run selection strategy
          */
         orderSpecifications.setResolution(algorithm.runStrategy(
-                orderSpecifications.getShoppingCart(),
+                new StrategyDto(orderSpecifications.getShoppingCart(), orderSpecifications.getAddress()),
                 locationRepository.findAll(),
                 stocksAsMap()));
         return orderSpecifications;
@@ -112,7 +103,6 @@ public class StockService {
                 .stockKey(new StockKey(orderDetail.getProduct().getProductId(),order.getLocation().getLocationId()))
                 .quantity(orderDetail.getQuantity())
                 .build()));
-
         return exportStocks;
     }
 
@@ -156,7 +146,7 @@ public class StockService {
         updateStock(locationId,productId,-quantity);
     }
 
-    private Map<StockKey, Stock> stocksAsMap(){
+    private Map<StockKey, Stock> stocksAsMap() {
         return stockRepository.findAll().stream().collect(Collectors.toMap(Stock::getStockKey, stock -> stock));
     }
 }

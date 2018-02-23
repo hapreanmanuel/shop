@@ -7,18 +7,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit4.SpringRunner;
 import ro.msg.learning.shop.domain.Address;
+import ro.msg.learning.shop.dto.OrderCreationDto;
 import ro.msg.learning.shop.dto.OrderSpecifications;
-import ro.msg.learning.shop.dto.ResolvedOrderDetail;
 import ro.msg.learning.shop.dto.ShoppingCartEntry;
 import ro.msg.learning.shop.service.ShopService;
 import ro.msg.learning.shop.service.StockService;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(properties="spring.jpa.hibernate.ddl-auto=none")
 public class StrategySelectionTests {
 
     @Autowired
@@ -48,41 +46,73 @@ public class StrategySelectionTests {
     @Test
     public void singleStrategyTestSuite(){
 
-        //Shipment address
-        Address address = Address.builder().build();
-        address.setCity("Cluj-Napoca");
-        address.setCountry("Romania");
-        address.setRegion("CJ");
-        address.setFullAddress("Dorobantilor 112B AP6");
+        OrderCreationDto o = new OrderCreationDto(1);
+        OrderSpecifications os;
+
+        o.setAddress(Address.builder()
+                .region("CJ")
+                .country("Romania")
+                .city("Cluj-Napoca")
+                .fullAddress("Home street avenue 111").build());
+
+        o.getShoppingCart().add(new ShoppingCartEntry(1,10));
+        o.getShoppingCart().add(new ShoppingCartEntry(2,25));
 
         //Specification for an order for the first customer
         //This order should be possible from the first location
-        OrderSpecifications orderSpecifications1 = shopService.createBasicOrderSpecificationsForCustomer(1);
-        orderSpecifications1.setAddress(address);
-        orderSpecifications1.getShoppingCart().add(new ShoppingCartEntry(1,10));
-        orderSpecifications1.getShoppingCart().add(new ShoppingCartEntry(2,25));
+        os = shopService.createOrderSpecifications(o);
 
         //Expected to find a suitable strategy in the first location
-        stockService.processRequest(orderSpecifications1);
+        stockService.processRequest(os);
 
-        assertThat(orderSpecifications1.getResolution()).isNotEmpty();
-        assertThat(orderSpecifications1.getResolution().iterator().next().getLocationId()).isEqualTo(1);
+        assertThat(os.getResolution()).isNotEmpty();
+        assertThat(os.getResolution().iterator().next().getLocationId()).isEqualTo(1);
 
         //Expected to find a suitable strategy in the second location
-        orderSpecifications1.getShoppingCart().add(new ShoppingCartEntry(3,102));
+        o.getShoppingCart().add(new ShoppingCartEntry(3,102));
 
-        stockService.processRequest(orderSpecifications1);
+        os = shopService.createOrderSpecifications(o);
 
-        assertThat(orderSpecifications1.getResolution()).isNotEmpty();
-        assertThat(orderSpecifications1.getResolution().iterator().next().getLocationId()).isEqualTo(2);
+        stockService.processRequest(os);
+
+        assertThat(os.getResolution()).isNotEmpty();
+        assertThat(os.getResolution().iterator().next().getLocationId()).isEqualTo(2);
 
         //Should not find a suitable strategy
-        orderSpecifications1.getShoppingCart().add(new ShoppingCartEntry(4,202));
-        stockService.processRequest(orderSpecifications1);
+        o.getShoppingCart().add(new ShoppingCartEntry(4,202));
+        os = shopService.createOrderSpecifications(o);
 
-        assertThat(orderSpecifications1.getResolution()).isEmpty();
+        stockService.processRequest(os);
+
+        assertThat(os.getResolution()).isEmpty();
 
     }
 
+    @Test
+    public void closestStrategyTest(){
 
+        OrderCreationDto o = new OrderCreationDto(1);
+        OrderSpecifications os;
+
+        o.setAddress(Address.builder()
+                .region("CT")
+                .country("Romania")
+                .city("Constanta")
+                .fullAddress("Calea laptelui 22").build());
+
+        o.getShoppingCart().add(new ShoppingCartEntry(1,10));
+        o.getShoppingCart().add(new ShoppingCartEntry(2,25));
+
+        /*
+            2nd location is closoer to the shippment address
+         */
+        os = shopService.createOrderSpecifications(o);
+
+        //Expected to find a suitable strategy in the first location
+        stockService.processRequest(os);
+
+        assertThat(os.getResolution()).isNotEmpty();
+        assertThat(os.getResolution().iterator().next().getLocationId()).isEqualTo(2);
+
+    }
 }

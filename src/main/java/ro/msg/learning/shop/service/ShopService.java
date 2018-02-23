@@ -3,14 +3,15 @@ package ro.msg.learning.shop.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.msg.learning.shop.domain.*;
+import ro.msg.learning.shop.dto.OrderCreationDto;
 import ro.msg.learning.shop.dto.OrderSpecifications;
 import ro.msg.learning.shop.dto.ResolvedOrderDetail;
-import ro.msg.learning.shop.exception.InvalidLocationException;
+import ro.msg.learning.shop.exception.EmptyShoppingCartException;
+import ro.msg.learning.shop.exception.InvalidShippmentAddressException;
 import ro.msg.learning.shop.exception.NoSuitableStrategyException;
 import ro.msg.learning.shop.repository.*;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,8 +56,7 @@ public class ShopService {
      */
     //Customers
     public Customer getCustomer(int customerId){return customerRepository.findOne(customerId);}
-//    public Customer getCustomerByUserame(String customerUsername){return customerRepository.findByUserName(customerUsername); }
-    public List<Customer> getAllCustomers(){return customerRepository.findAll();}
+   public List<Customer> getAllCustomers(){return customerRepository.findAll();}
 
     //Product
     public List<Product> getAllProducts(){return productRepository.findAll();}
@@ -71,9 +71,7 @@ public class ShopService {
     }
 
     //Orderdetails
-//    private void addOrderDetail(OrderDetail orderDetail){ orderDetailRepository.save(orderDetail);}
-//    private void addOrderDetails(List<OrderDetail> orderDetails){orderDetails.forEach(this::addOrderDetail);}
-    public List<OrderDetail> getAllDetailsForOrder(int orderId){return orderDetailRepository.findByOrderDetailKey_OrderId(orderId); }
+   public List<OrderDetail> getAllDetailsForOrder(int orderId){return orderDetailRepository.findByOrderDetailKey_OrderId(orderId); }
 
 /*•	You get a single java object as input. This object will contain the order timestamp, the delivery address and a list of products (product ID and quantity) contained in the order.
         •	You return an Order entity if the operation was successful. If not, you throw an exception.
@@ -84,31 +82,26 @@ public class ShopService {
         •	Afterwards the order is persisted in the database and returned.
 */
 
-    public OrderSpecifications createBasicOrderSpecificationsForCustomer(int customerId){
-        return OrderSpecifications.builder()
-                .customerId(customerId)
-                .shoppingCart(new ArrayList<>())
-                .address(Address.builder().build())
-                .build();
+    public OrderSpecifications createOrderSpecifications(OrderCreationDto request){
+
+        if(!request.getAddress().checkIfValid()){
+            throw new InvalidShippmentAddressException();
+        }
+        if(request.getShoppingCart().isEmpty()){
+            throw new EmptyShoppingCartException();
+        }
+
+        return OrderSpecifications.builder().request(request).build();
     }
 
     //This method should be called after the order specifications have been processed -> resolution is not empty
     @Transactional
     public Order createNewOrder(OrderSpecifications orderSpecifications){
 
-        /*
-           Check specifications validity
-         */
-        if(!orderSpecifications.getAddress().checkIfValid()){
-            throw new InvalidLocationException();
-        }
         if(orderSpecifications.getResolution().isEmpty()) {
             throw new NoSuitableStrategyException();
         }
 
-        /*
-            Create a new order
-         */
         Order newOrder = new Order();
 
         //Set customer and shipping address

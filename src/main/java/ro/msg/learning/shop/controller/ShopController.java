@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ro.msg.learning.shop.domain.Customer;
 import ro.msg.learning.shop.domain.Order;
+import ro.msg.learning.shop.dto.OrderCreationDto;
 import ro.msg.learning.shop.dto.OrderSpecifications;
 import ro.msg.learning.shop.domain.Product;
 import ro.msg.learning.shop.service.ShopService;
@@ -56,9 +57,11 @@ public class ShopController {
             value = "/orders/new",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = "application/json")
-    public @ResponseBody Order createOrder(@RequestBody OrderSpecifications orderSpecifications){
+    public @ResponseBody Order createOrder(@RequestBody OrderCreationDto request){
 
-        OrderSpecifications os = stockService.processRequest(orderSpecifications);
+        OrderSpecifications os = shopService.createOrderSpecifications(request);
+
+        stockService.processRequest(os);
 
         Order newOrder = shopService.createNewOrder(os);
 
