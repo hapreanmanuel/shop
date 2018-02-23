@@ -6,14 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import ro.msg.learning.shop.domain.Address;
+import ro.msg.learning.shop.dto.OrderCreationDto;
 import ro.msg.learning.shop.dto.OrderSpecifications;
 import ro.msg.learning.shop.dto.ShoppingCartEntry;
 import ro.msg.learning.shop.domain.Customer;
 import ro.msg.learning.shop.domain.Order;
 import ro.msg.learning.shop.domain.OrderDetail;
 import ro.msg.learning.shop.exception.EmptyShoppingCartException;
-import ro.msg.learning.shop.exception.InvalidLocationException;
-import ro.msg.learning.shop.exception.NoSuitableStrategyException;
+import ro.msg.learning.shop.exception.InvalidShippmentAddressException;
 import ro.msg.learning.shop.service.ShopService;
 import ro.msg.learning.shop.service.StockService;
 
@@ -43,25 +43,28 @@ public class OrderOperatinonsTests {
         //Get dummy customer    (entry created by component 'AddMockDataToDatabase')
         Customer dummyCustomer = shopService.getCustomer(1);
 
-        /*
-            Create an OrderSpecifications object (single input for order creation)
-         */
-        OrderSpecifications orderSpecifications = shopService.createBasicOrderSpecificationsForCustomer(dummyCustomer.getCustomerId());
+        OrderCreationDto o = new OrderCreationDto(dummyCustomer.getCustomerId());
 
-        //Delivery address
-        Address dummyDevileryAddress = Address.builder().build();
-        dummyDevileryAddress.setCity("Cluj-Napoca");
-        dummyDevileryAddress.setCountry("Romania");
-        dummyDevileryAddress.setRegion("CJ");
-        dummyDevileryAddress.setFullAddress("Dummy home St LakePark 22321B");
-
-        orderSpecifications.setAddress(dummyDevileryAddress);
+        Address adr = Address.builder()
+                .region("CJ")
+                .country("Romania")
+                .city("Cluj-Napoca")
+                .fullAddress("Home street avenue 111").build();
+        o.setAddress(adr);
 
         ShoppingCartEntry sh1 = new ShoppingCartEntry(1, 10);
         ShoppingCartEntry sh2 = new ShoppingCartEntry(2,20);
 
-        orderSpecifications.getShoppingCart().add(sh1);
-        orderSpecifications.getShoppingCart().add(sh2);
+        o.getShoppingCart().add(sh1);
+        o.getShoppingCart().add(sh2);
+
+
+        /*
+            Create an OrderSpecifications object (single input for order creation)
+         */
+        OrderSpecifications orderSpecifications = shopService.createOrderSpecifications(o);
+
+
 
         //Submit the order by calling the order creation method from orderService
         Order dummyOrder = shopService.createNewOrder(orderSpecifications);
@@ -92,48 +95,45 @@ public class OrderOperatinonsTests {
     }
     @Test
     public void orderCreationExceptionHandlingTest(){
-        /*
-        Currently a NullPointerException is thrown if not all fields of an address have been assigned
-         */
 
-        //Shipment address
-        Address address = Address.builder().build();
-        address.setCity("Cluj-Napoca");
-        address.setCountry("Romania");
-        address.setRegion("CJ");
-        address.setFullAddress("");
 
-        OrderSpecifications orderSpecifications = shopService.createBasicOrderSpecificationsForCustomer(1);
-        orderSpecifications.setAddress(address);
+        OrderCreationDto o = new OrderCreationDto(1);
 
-        //Should throw an 'invalid shippment location' exception
+        Address adr = Address.builder()
+                .region("CJ")
+                .country("Romania")
+                .city("Cluj-Napoca")
+                .fullAddress("Home street avenue 111").build();
+
+        ShoppingCartEntry sh1 = new ShoppingCartEntry(1, 10);
+
+        ShoppingCartEntry sh2 = new ShoppingCartEntry(2,20);
+
+        //Invalid address exception
         try{
-            shopService.createNewOrder(orderSpecifications);
-        }catch(Exception e) {
-            assertThat(e.getMessage()).isEqualTo(new InvalidLocationException().getMessage());
+            shopService.createOrderSpecifications(o);
+        } catch (Exception e){
+            assertThat(e).isInstanceOf(InvalidShippmentAddressException.class);
         }
 
-        address.setCity("Cluj-Napoca");
-        address.setCountry("Romania");
-        address.setRegion("CJ");
-        address.setFullAddress("Dorobantilor 112B AP6");
-        orderSpecifications.setAddress(address);
+        o.setAddress(adr);
 
-        //Should throw an 'empty shopping cart' exception
+        //Empty shopping cart exception
         try{
-            shopService.createNewOrder(orderSpecifications);
-        }catch(Exception e) {
-            assertThat(e.getMessage()).isEqualTo(new EmptyShoppingCartException().getMessage());
+            shopService.createOrderSpecifications(o);
+        } catch (Exception e){
+            assertThat(e).isInstanceOf(EmptyShoppingCartException.class);
         }
 
-        orderSpecifications.getShoppingCart().add(new ShoppingCartEntry(1,301));
+        o.getShoppingCart().add(sh1);
+        o.getShoppingCart().add(sh2);
 
-        //Should throw an 'no suitable strategy' exception
         try{
-            shopService.createNewOrder(orderSpecifications);
-        }catch(Exception e) {
-            assertThat(e.getMessage()).isEqualTo(new NoSuitableStrategyException().getMessage());
+            shopService.createOrderSpecifications(o);
+        } catch(Exception e){
+            assertThat(false).isEqualTo(true);  //No exception should be thrown here
         }
+
     }
 
 }

@@ -30,10 +30,10 @@ public class OrderSpecifications {
     private Address address;
 
     @Builder
-    public OrderSpecifications(int customerId, List<ShoppingCartEntry> shoppingCart, Address address) {
-        this.customerId = customerId;
-        this.shoppingCart = shoppingCart;
-        this.address = address;
+    public OrderSpecifications(OrderCreationDto request) {
+        this.customerId = request.getCustomerId();
+        this.shoppingCart = request.getShoppingCart();
+        this.address = request.getAddress();
     }
 }
 

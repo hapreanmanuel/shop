@@ -1,11 +1,11 @@
 package ro.msg.learning.shop.utility.strategy;
 
-import ro.msg.learning.shop.dto.OrderSpecifications;
 import ro.msg.learning.shop.dto.ResolvedOrderDetail;
 import ro.msg.learning.shop.domain.StockKey;
 import ro.msg.learning.shop.domain.Location;
 import ro.msg.learning.shop.domain.Stock;
 import ro.msg.learning.shop.dto.ShoppingCartEntry;
+import ro.msg.learning.shop.dto.StrategyDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,9 @@ import java.util.Map;
 
 public class SingleLocationAlgorithm implements StrategySelectionAlgorithm{
     @Override
-    public List<ResolvedOrderDetail> runStrategy(List<ShoppingCartEntry> wishList, List<Location> locationList, Map<StockKey, Stock> stockMap) {
+    public List<ResolvedOrderDetail> runStrategy(StrategyDto details, List<Location> locationList, Map<StockKey, Stock> stockMap) {
 
+        List<ShoppingCartEntry> wishList = details.getWishList();
         //For each location, find if there are enough products to fully satisfy the order requirements
         for(Location location: locationList){
 
