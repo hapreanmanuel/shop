@@ -82,7 +82,7 @@ public class ShopService {
         •	Afterwards the order is persisted in the database and returned.
 */
 
-    public OrderSpecifications createOrderSpecifications(OrderCreationDto request){
+    public OrderSpecifications createOrderSpecifications(OrderCreationDto request, String username){
 
         if(!request.getAddress().checkIfValid()){
             throw new InvalidShippmentAddressException();
@@ -91,7 +91,8 @@ public class ShopService {
             throw new EmptyShoppingCartException();
         }
 
-        return OrderSpecifications.builder().request(request).build();
+        return OrderSpecifications.builder().customer(customerRepository.findByUser_Username(username)).request(request).build();
+
     }
 
     //This method should be called after the order specifications have been processed -> resolution is not empty
@@ -105,7 +106,7 @@ public class ShopService {
         Order newOrder = new Order();
 
         //Set customer and shipping address
-        newOrder.setCustomer(getCustomer(orderSpecifications.getCustomerId()));
+        newOrder.setCustomer(orderSpecifications.getCustomer());
         newOrder.setShippingAddress(orderSpecifications.getAddress());
 
         //Save order -> this step is needed to get a compliant ID for the order

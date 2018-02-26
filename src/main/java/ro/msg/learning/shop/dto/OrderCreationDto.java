@@ -9,13 +9,6 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class OrderCreationDto {
-    private int customerId;
-
     private List<ShoppingCartEntry> shoppingCart;
-
     private Address address;
-
-    public OrderCreationDto(int customerId) {
-        this.customerId = customerId;
-    }
 }

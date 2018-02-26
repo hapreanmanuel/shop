@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit4.SpringRunner;
 import ro.msg.learning.shop.domain.Address;
+import ro.msg.learning.shop.domain.Customer;
 import ro.msg.learning.shop.dto.OrderCreationDto;
 import ro.msg.learning.shop.dto.OrderSpecifications;
 import ro.msg.learning.shop.dto.ShoppingCartEntry;
@@ -46,7 +47,10 @@ public class StrategySelectionTests {
     @Test
     public void singleStrategyTestSuite(){
 
-        OrderCreationDto o = new OrderCreationDto(1);
+        Customer customer = shopService.getCustomer(1);
+
+        OrderCreationDto o = new OrderCreationDto();
+
         OrderSpecifications os;
 
         o.setAddress(Address.builder()
@@ -60,7 +64,7 @@ public class StrategySelectionTests {
 
         //Specification for an order for the first customer
         //This order should be possible from the first location
-        os = shopService.createOrderSpecifications(o);
+        os = shopService.createOrderSpecifications(o, customer.getUser().getUsername());
 
         //Expected to find a suitable strategy in the first location
         stockService.processRequest(os);
@@ -71,7 +75,7 @@ public class StrategySelectionTests {
         //Expected to find a suitable strategy in the second location
         o.getShoppingCart().add(new ShoppingCartEntry(3,102));
 
-        os = shopService.createOrderSpecifications(o);
+        os = shopService.createOrderSpecifications(o, customer.getUser().getUsername());
 
         stockService.processRequest(os);
 
@@ -80,7 +84,7 @@ public class StrategySelectionTests {
 
         //Should not find a suitable strategy
         o.getShoppingCart().add(new ShoppingCartEntry(4,202));
-        os = shopService.createOrderSpecifications(o);
+        os = shopService.createOrderSpecifications(o, customer.getUser().getUsername());
 
         stockService.processRequest(os);
 
@@ -91,7 +95,9 @@ public class StrategySelectionTests {
     @Test
     public void closestStrategyTest(){
 
-        OrderCreationDto o = new OrderCreationDto(1);
+        Customer customer = shopService.getCustomer(1);
+
+        OrderCreationDto o = new OrderCreationDto();
         OrderSpecifications os;
 
         o.setAddress(Address.builder()
@@ -106,7 +112,7 @@ public class StrategySelectionTests {
         /*
             2nd location is closoer to the shippment address
          */
-        os = shopService.createOrderSpecifications(o);
+        os = shopService.createOrderSpecifications(o, customer.getUser().getUsername());
 
         //Expected to find a suitable strategy in the first location
         stockService.processRequest(os);
