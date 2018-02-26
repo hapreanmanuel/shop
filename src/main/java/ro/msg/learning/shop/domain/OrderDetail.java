@@ -3,7 +3,6 @@ package ro.msg.learning.shop.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.*;
 
 @Builder
