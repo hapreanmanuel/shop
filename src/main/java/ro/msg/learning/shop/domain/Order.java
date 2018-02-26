@@ -29,6 +29,6 @@ public class Order {
     @Embedded
     private Address shippingAddress;
 
-
+    private boolean revenued = false;
 
 }
