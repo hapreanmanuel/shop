@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ro.msg.learning.shop.domain.Address;
+import ro.msg.learning.shop.domain.Customer;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.List;
 @Data
 public class OrderSpecifications {
 
-    private int customerId;
+    private Customer customer;
 
     private List<ShoppingCartEntry> shoppingCart;
 
@@ -30,8 +31,8 @@ public class OrderSpecifications {
     private Address address;
 
     @Builder
-    public OrderSpecifications(OrderCreationDto request) {
-        this.customerId = request.getCustomerId();
+    public OrderSpecifications(OrderCreationDto request, Customer customer) {
+        this.customer = customer;
         this.shoppingCart = request.getShoppingCart();
         this.address = request.getAddress();
     }

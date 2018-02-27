@@ -4,8 +4,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import ro.msg.learning.shop.configuration.RevenueConfig;
 import ro.msg.learning.shop.domain.*;
+import ro.msg.learning.shop.utility.revenue.RevenueCalculator;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -50,7 +50,7 @@ public class RevenueCalculatorTest {
 
         List<Order> orders = Arrays.asList(o1, o2);
 
-        Revenue rev = RevenueConfig.getRevenueForLocation(l, orders);
+        Revenue rev = RevenueCalculator.getRevenueForLocation(l, orders);
 
         assertThat(rev.getLocation()).isEqualTo(l);
 

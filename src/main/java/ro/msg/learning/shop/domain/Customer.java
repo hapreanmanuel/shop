@@ -15,7 +15,6 @@ public class Customer {
     @Column(name="CUSTOMERID")
     private int customerId;
 
- //   @JoinColumn(name="USER_ID", unique = true)
     @MapsId
     @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
     private User user;

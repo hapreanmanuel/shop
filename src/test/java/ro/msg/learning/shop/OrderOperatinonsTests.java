@@ -43,7 +43,7 @@ public class OrderOperatinonsTests {
         //Get dummy customer    (entry created by component 'AddMockDataToDatabase')
         Customer dummyCustomer = shopService.getCustomer(1);
 
-        OrderCreationDto o = new OrderCreationDto(dummyCustomer.getCustomerId());
+        OrderCreationDto o = new OrderCreationDto();
 
         Address adr = Address.builder()
                 .region("CJ")
@@ -62,7 +62,7 @@ public class OrderOperatinonsTests {
         /*
             Create an OrderSpecifications object (single input for order creation)
          */
-        OrderSpecifications orderSpecifications = shopService.createOrderSpecifications(o);
+        OrderSpecifications orderSpecifications = shopService.createOrderSpecifications(o, dummyCustomer.getUser().getUsername());
 
 
 
@@ -96,8 +96,10 @@ public class OrderOperatinonsTests {
     @Test
     public void orderCreationExceptionHandlingTest(){
 
+        Customer dummyCustomer = shopService.getCustomer(1);
 
-        OrderCreationDto o = new OrderCreationDto(1);
+
+        OrderCreationDto o = new OrderCreationDto();
 
         Address adr = Address.builder()
                 .region("CJ")
@@ -111,7 +113,7 @@ public class OrderOperatinonsTests {
 
         //Invalid address exception
         try{
-            shopService.createOrderSpecifications(o);
+            shopService.createOrderSpecifications(o, dummyCustomer.getUser().getUsername());
         } catch (Exception e){
             assertThat(e).isInstanceOf(InvalidShippmentAddressException.class);
         }
@@ -120,7 +122,7 @@ public class OrderOperatinonsTests {
 
         //Empty shopping cart exception
         try{
-            shopService.createOrderSpecifications(o);
+            shopService.createOrderSpecifications(o,dummyCustomer.getUser().getUsername());
         } catch (Exception e){
             assertThat(e).isInstanceOf(EmptyShoppingCartException.class);
         }
@@ -129,7 +131,7 @@ public class OrderOperatinonsTests {
         o.getShoppingCart().add(sh2);
 
         try{
-            shopService.createOrderSpecifications(o);
+            shopService.createOrderSpecifications(o,dummyCustomer.getUser().getUsername());
         } catch(Exception e){
             assertThat(false).isEqualTo(true);  //No exception should be thrown here
         }

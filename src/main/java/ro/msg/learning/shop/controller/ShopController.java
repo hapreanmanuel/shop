@@ -2,6 +2,7 @@ package ro.msg.learning.shop.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ro.msg.learning.shop.domain.Customer;
 import ro.msg.learning.shop.domain.Order;
@@ -57,9 +58,9 @@ public class ShopController {
             value = "/orders/new",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = "application/json")
-    public @ResponseBody Order createOrder(@RequestBody OrderCreationDto request){
+    public @ResponseBody Order createOrder(@RequestBody OrderCreationDto request, Authentication authentication){
 
-        OrderSpecifications os = shopService.createOrderSpecifications(request);
+        OrderSpecifications os = shopService.createOrderSpecifications(request, authentication.getName());
 
         stockService.processRequest(os);
 
