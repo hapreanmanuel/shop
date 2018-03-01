@@ -15,6 +15,7 @@ public class Order {
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="ORDER_ID")
     private int orderId;
 
     @ManyToOne

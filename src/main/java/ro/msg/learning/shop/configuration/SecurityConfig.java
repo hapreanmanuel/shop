@@ -53,6 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.headers().frameOptions().sameOrigin();
         http.authorizeRequests()
+                .antMatchers("/odata/","/odata/Orders", "/odata/OrderDetails", "/odata/Products").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().permitAll()

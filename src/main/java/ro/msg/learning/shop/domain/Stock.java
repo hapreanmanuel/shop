@@ -26,7 +26,7 @@ public class Stock {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @ManyToOne
-    @JoinColumn(name="LOCATIONID",referencedColumnName = "LOCATIONID",insertable = false,updatable = false)
+    @JoinColumn(name="LOCATIONID",referencedColumnName = "LOCATION_ID",insertable = false,updatable = false)
     private Location location;
 
     private int quantity;
