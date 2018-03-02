@@ -5,11 +5,11 @@ import org.springframework.stereotype.Service;
 import ro.msg.learning.shop.domain.*;
 import ro.msg.learning.shop.dto.OrderCreationDto;
 import ro.msg.learning.shop.dto.OrderSpecifications;
-import ro.msg.learning.shop.dto.ResolvedOrderDetail;
+import ro.msg.learning.shop.dto.ShoppingCartEntry;
 import ro.msg.learning.shop.exception.EmptyShoppingCartException;
 import ro.msg.learning.shop.exception.InvalidShippmentAddressException;
-import ro.msg.learning.shop.exception.NoSuitableStrategyException;
 import ro.msg.learning.shop.repository.*;
+import ro.msg.learning.shop.utility.distance.DistanceCalculator;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -29,26 +29,16 @@ public class ShopService {
 
     //Repositories
     private final CustomerRepository customerRepository;
-    private final ProductCategoryRepository productCategoryRepository ;
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
-    private final OrderDetailRepository orderDetailRepository;
-    private final LocationRepository locationRepository;
 
     @Autowired
     public ShopService(CustomerRepository customerRepository,
-                       ProductCategoryRepository productCategoryRepository,
                        ProductRepository productRepository,
-                       OrderRepository orderRepository,
-                       OrderDetailRepository orderDetailRepository,
-                       LocationRepository locationRepository){
+                       OrderRepository orderRepository){
         this.customerRepository = customerRepository;
-        this.productCategoryRepository = productCategoryRepository;
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
-        this.orderDetailRepository = orderDetailRepository;
-        this.locationRepository = locationRepository;
-
     }
 
     /*
@@ -56,7 +46,7 @@ public class ShopService {
      */
     //Customers
     public Customer getCustomer(int customerId){return customerRepository.findOne(customerId);}
-   public List<Customer> getAllCustomers(){return customerRepository.findAll();}
+    public List<Customer> getAllCustomers(){return customerRepository.findAll();}
 
     //Product
     public List<Product> getAllProducts(){return productRepository.findAll();}
@@ -70,9 +60,6 @@ public class ShopService {
         return orderRepository.findByCustomer_CustomerId(customerId);
     }
 
-    //Orderdetails
-   public List<OrderDetail> getAllDetailsForOrder(int orderId){return orderDetailRepository.findByOrderDetailKey_OrderId(orderId); }
-
 /*•	You get a single java object as input. This object will contain the order timestamp, the delivery address and a list of products (product ID and quantity) contained in the order.
         •	You return an Order entity if the operation was successful. If not, you throw an exception.
         •	The service has to select a strategy for finding from which locations should the products be taken. See the strategy design pattern. The strategy should be selected based on a spring boot configuration. The following initial strategy should be created:
@@ -84,24 +71,17 @@ public class ShopService {
 
     public OrderSpecifications createOrderSpecifications(OrderCreationDto request, String username){
 
-        if(!request.getAddress().checkIfValid()){
+        if(!DistanceCalculator.checkIfAddressIsValid(request.getAddress())){
             throw new InvalidShippmentAddressException();
         }
         if(request.getShoppingCart().isEmpty()){
             throw new EmptyShoppingCartException();
         }
-
         return OrderSpecifications.builder().customer(customerRepository.findByUser_Username(username)).request(request).build();
-
     }
 
-    //This method should be called after the order specifications have been processed -> resolution is not empty
     @Transactional
     public Order createNewOrder(OrderSpecifications orderSpecifications){
-
-        if(orderSpecifications.getResolution().isEmpty()) {
-            throw new NoSuitableStrategyException();
-        }
 
         Order newOrder = new Order();
 
@@ -113,7 +93,10 @@ public class ShopService {
         orderRepository.save(newOrder);
 
         //Set order details
-        addDetailsToOrder(orderSpecifications.getResolution(), newOrder);
+        addDetailsToOrder(orderSpecifications.getShoppingCart(), newOrder);
+
+        //Update status
+        newOrder.setStatus(Order.Status.PROCESSING);
 
         //Persist with order details added
         orderRepository.save(newOrder);
@@ -122,17 +105,14 @@ public class ShopService {
     }
 
     @Transactional
-    private void addDetailsToOrder(List<ResolvedOrderDetail> resolvedOrderDetails, Order order){
-        List<OrderDetail> details = resolvedOrderDetails.stream().map(resolvedOrderDetail-> OrderDetail.builder()
+    private void addDetailsToOrder(List<ShoppingCartEntry> request, Order order){
+        List<OrderDetail> details = request.stream().map(entry-> OrderDetail.builder()
                 .order(order)
-                .product(productRepository.findOne(resolvedOrderDetail.getProductId()))
-                .quantity(resolvedOrderDetail.getQuantity())
-                .orderDetailKey(new OrderDetailKey(order.getOrderId(),resolvedOrderDetail.getProductId()))
+                .product(productRepository.findOne(entry.getProductId()))
+                .quantity(entry.getQuantity())
+                .orderDetailKey(new OrderDetailKey(order.getOrderId(),entry.getProductId()))
                 .build()).collect(Collectors.toList());
         order.setOrderDetails(details);
-
-        order.setLocation(locationRepository.findOne(resolvedOrderDetails.iterator().next().getLocationId()));
     }
-
 
 }

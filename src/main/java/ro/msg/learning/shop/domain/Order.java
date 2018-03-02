@@ -32,4 +32,14 @@ public class Order {
 
     private boolean revenued = false;
 
+    @Column(name="status", columnDefinition = "VARCHAR(255) default 'CREATED'")
+    @Enumerated(EnumType.STRING)
+    private Status status = Order.Status.CREATED;
+
+    public enum Status{
+        CREATED,
+        PROCESSING,
+        DENYED,
+        COMPLETE
+    }
 }

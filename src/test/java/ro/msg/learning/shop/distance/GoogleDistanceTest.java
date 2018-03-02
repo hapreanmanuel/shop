@@ -1,6 +1,5 @@
 package ro.msg.learning.shop.distance;
 
-import com.google.maps.model.DistanceMatrix;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;

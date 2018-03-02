@@ -28,9 +28,6 @@ public class OrderDetail {
     @JoinColumn(name="PRODUCTID",referencedColumnName = "PRODUCTID",insertable = false,updatable = false)
     private Product product;
 
-    public OrderDetail(OrderDetailKey orderDetailKey){
-        this.orderDetailKey=orderDetailKey;
-    }
 }
 
 

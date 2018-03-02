@@ -40,6 +40,7 @@ public class StrategyConfig {
         geoApiContext.setApiKey(key);
         geoApiContext.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(domain, port)));
 
+
         return new DistanceCalculator(geoApiContext);
     }
 
