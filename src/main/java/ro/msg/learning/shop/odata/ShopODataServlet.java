@@ -1,7 +1,6 @@
 package ro.msg.learning.shop.odata;
 
 import org.apache.olingo.odata2.api.ODataServiceFactory;
-import org.apache.olingo.odata2.api.commons.ODataHttpMethod;
 import org.apache.olingo.odata2.core.servlet.ODataServlet;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,11 +17,9 @@ public class ShopODataServlet extends ODataServlet{
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse res) throws IOException{
-        if(!ODataHttpMethod.GET.name().equals(req.getMethod())){
-            res.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
         req.setAttribute(ODataServiceFactory.FACTORY_INSTANCE_LABEL, serviceFactory);
+
         super.service(req, res);
     }
+
 }

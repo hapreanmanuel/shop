@@ -15,12 +15,12 @@ import javax.persistence.EntityManagerFactory;
 @Configuration
 public class ODataConfig{
 
-    private static final String SERVICE_URL = "/odata/";
+    private static final String SERVICE_URL = "/odata/*";
 
     @Bean
     public ServletRegistrationBean odataServlet(@Value("${shop.persistence.unit.name}") String namespace,
                                                 @Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory){
         return new ServletRegistrationBean(
-                new ShopODataServlet(new ShopODataServiceFactory(entityManagerFactory, namespace)), SERVICE_URL +"*");
+                new ShopODataServlet(new ShopODataServiceFactory(entityManagerFactory, namespace)), SERVICE_URL);
     }
 }

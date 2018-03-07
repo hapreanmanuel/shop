@@ -14,6 +14,7 @@ public class ShopODataServiceFactory extends ODataJPAServiceFactory {
     public ShopODataServiceFactory(final EntityManagerFactory entityManagerFactory, final String namespace) {
         this.entityManagerFactory = entityManagerFactory;
         this.namespace = namespace;
+
     }
 
     @Override
@@ -23,5 +24,7 @@ public class ShopODataServiceFactory extends ODataJPAServiceFactory {
         context.setPersistenceUnitName(namespace);
         return context;
     }
+
 }
+
 
