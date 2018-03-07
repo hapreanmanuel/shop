@@ -41,34 +41,20 @@ public class ShopController {
     public @ResponseBody List<Customer> getCustomers() { return shopService.getAllCustomers(); }
 
 
-    @GetMapping(value = "/customers/{customerId}",
-                produces = "application/json")
-    public @ResponseBody Customer getCustomer(@PathVariable("customerId") int customerId){
-        return shopService.getCustomer(customerId);
-    }
-
-
-    @GetMapping(value= "/orders/{customerId}/all",
-                produces = "application/json")
-    public @ResponseBody List<Order> getOrdersForCustomer(@PathVariable("customerId") int customerId){
-        return shopService.getAllOrdesForCustomer(customerId);
-    }
-
     @PostMapping(
-            value = "/orders/new",
+            value = "/orders/create",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = "application/json")
     public @ResponseBody Order createOrder(@RequestBody OrderCreationDto request, Authentication authentication){
-
         OrderSpecifications os = shopService.createOrderSpecifications(request, authentication.getName());
+        return shopService.createNewOrder(os);
+    }
 
-        stockService.processRequest(os);
-
-        Order newOrder = shopService.createNewOrder(os);
-
-        stockService.updateStockForOrder(newOrder);
-
-        return newOrder;
+    @PostMapping(
+            value="/orders/process/{orderId}",
+            produces = "application/json")
+    public @ResponseBody Order processOrder(@PathVariable int orderId){
+        return stockService.processOrder(orderId);
     }
 }
 

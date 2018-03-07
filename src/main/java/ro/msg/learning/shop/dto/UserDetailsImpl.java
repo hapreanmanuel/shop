@@ -12,8 +12,7 @@ import java.util.List;
 
 public class UserDetailsImpl implements UserDetails{
 
-//    @Transient
-    private User user;
+    private transient User user;
 
     public UserDetailsImpl(User user) {
         this.user = user;

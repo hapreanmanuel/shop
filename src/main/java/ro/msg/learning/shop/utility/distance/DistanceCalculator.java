@@ -11,7 +11,6 @@ import ro.msg.learning.shop.exception.InvalidRequestException;
 
 import java.util.*;
 
-
 @Slf4j
 public class DistanceCalculator {
 
@@ -75,5 +74,11 @@ public class DistanceCalculator {
 
     private static String googleLocationFromAddress(Address address){
         return address.getCity() +", " + address.getRegion() + ", " + address.getCountry();
+    }
+
+    public static boolean checkIfAddressIsValid(Address address){
+        return !address.getCountry().equals("") &&
+                !address.getRegion().equals("") &&
+                !address.getCity().equals("");
     }
 }

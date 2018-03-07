@@ -21,16 +21,13 @@ public class OrderDetail {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="ORDERID",referencedColumnName = "ORDERID",insertable = false,updatable = false)
+    @JoinColumn(name="ORDERID",referencedColumnName = "ORDER_ID",insertable = false,updatable = false)
     private Order order;
 
     @ManyToOne
     @JoinColumn(name="PRODUCTID",referencedColumnName = "PRODUCTID",insertable = false,updatable = false)
     private Product product;
 
-    public OrderDetail(OrderDetailKey orderDetailKey){
-        this.orderDetailKey=orderDetailKey;
-    }
 }
 
 

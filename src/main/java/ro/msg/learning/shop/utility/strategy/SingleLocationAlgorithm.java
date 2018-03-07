@@ -1,6 +1,5 @@
 package ro.msg.learning.shop.utility.strategy;
 
-import ro.msg.learning.shop.dto.ResolvedOrderDetail;
 import ro.msg.learning.shop.domain.StockKey;
 import ro.msg.learning.shop.domain.Location;
 import ro.msg.learning.shop.domain.Stock;
@@ -21,27 +20,27 @@ import java.util.Map;
 
 public class SingleLocationAlgorithm implements StrategySelectionAlgorithm{
     @Override
-    public List<ResolvedOrderDetail> runStrategy(StrategyDto details, List<Location> locationList, Map<StockKey, Stock> stockMap) {
+    public Location runStrategy(StrategyDto details, List<Location> locationList, Map<StockKey, Stock> stockMap) {
 
         List<ShoppingCartEntry> wishList = details.getWishList();
         //For each location, find if there are enough products to fully satisfy the order requirements
         for(Location location: locationList){
 
-            List<ResolvedOrderDetail> candidate = new ArrayList<>();
+            List<ShoppingCartEntry> candidate = new ArrayList<>();
 
             wishList.forEach(shoppingCartEntry -> {
                 if(shoppingCartEntry.getQuantity() <= stockMap.get(new StockKey(shoppingCartEntry.getProductId(),location.getLocationId())).getQuantity()){
-                    candidate.add(new ResolvedOrderDetail(shoppingCartEntry.getProductId(), shoppingCartEntry.getQuantity(), location.getLocationId()));
+                    candidate.add(new ShoppingCartEntry(shoppingCartEntry.getProductId(), shoppingCartEntry.getQuantity()));
                 }else {
-                    candidate.add(new ResolvedOrderDetail(shoppingCartEntry.getProductId(), -1, location.getLocationId()));
+                    candidate.add(new ShoppingCartEntry(shoppingCartEntry.getProductId(), -1));
                 }
             });
 
             //Check if candidate list is a valid solution
             if(candidate.stream().noneMatch(resolvedOrderDetail -> (resolvedOrderDetail.getQuantity() < 0))){
-                return candidate;
+                return location;
             }
         }
-        return new ArrayList<>();
+        return null;
     }
 }

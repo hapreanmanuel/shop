@@ -13,7 +13,6 @@ import ro.msg.learning.shop.domain.Address;
 import ro.msg.learning.shop.domain.Customer;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -23,8 +22,6 @@ public class OrderSpecifications {
     private Customer customer;
 
     private List<ShoppingCartEntry> shoppingCart;
-
-    private List<ResolvedOrderDetail> resolution = new ArrayList<>();
 
     private final Timestamp orderCreationTimestamp = new Timestamp(System.currentTimeMillis());
 

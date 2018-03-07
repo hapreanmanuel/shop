@@ -15,6 +15,7 @@ public class Location {
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="LOCATION_ID")
     private int locationId;
 
     @Column(unique=true)
