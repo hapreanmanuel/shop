@@ -48,7 +48,6 @@ public class CsvHttpMessageConverter extends AbstractGenericHttpMessageConverter
         }
     }
 
-
     @Override
     public boolean canRead(Type type, Class<?> contextClass, MediaType mediaType) {
         boolean isList = false;

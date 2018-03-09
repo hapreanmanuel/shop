@@ -77,6 +77,7 @@ public class ShopService {
         if(request.getShoppingCart().isEmpty()){
             throw new EmptyShoppingCartException();
         }
+
         return OrderSpecifications.builder().customer(customerRepository.findByUser_Username(username)).request(request).build();
     }
 

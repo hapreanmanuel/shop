@@ -12,6 +12,13 @@ import java.util.List;
 @Table(name="order_table")                      //Changed table name from 'order' to 'order_table'
 public class Order {
 
+    public enum Status{
+        CREATED,
+        PROCESSING,
+        DENYED,
+        COMPLETE
+    }
+
     @Setter(AccessLevel.NONE)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,10 +43,5 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private Status status = Order.Status.CREATED;
 
-    public enum Status{
-        CREATED,
-        PROCESSING,
-        DENYED,
-        COMPLETE
-    }
+
 }

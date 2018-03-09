@@ -17,15 +17,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @RunWith(SpringRunner.class)
-@SpringBootTest(properties="spring.jpa.hibernate.ddl-auto=none")
+@SpringBootTest
 public class GoogleDistanceTest {
-
-    private final Class targetClass = DistanceCalculator.class;
 
     @Autowired
     private DistanceCalculator distanceCalculator;
 
-    private final Address testAddress = Address.builder()
+    private final Address delivery = Address.builder()
             .fullAddress("To the mooon!")
             .city("Sebes")
             .region("AB")
@@ -62,95 +60,24 @@ public class GoogleDistanceTest {
                     .build());
 
     @Test
-    public void checkAddressToGoogleLocationConversion(){
-        final String methodName = "googleLocationFromAddress";
+    public void sortLocationsByDistance(){
 
-        try{
-            Method method =
-                    targetClass.getDeclaredMethod(methodName, Address.class);
+        log.info("=========================================================================");
+        log.info("Test: Sort locations based on google distance matrix ");
 
-            method.setAccessible(true);
+        List<Location> sortedLocations = distanceCalculator.sortLocationsByDistance(locations,delivery);
 
+        //                                              TO : Sebes, AB, Romania
+        List<Location> expected = Arrays.asList(
+                locations.get(0),                       // Cluj-Napoca, CJ, Romania     ~110 km
+                locations.get(2),                       // Timisoara, TM, Romania       ~200 km
+                locations.get(1)                        // Bucuresti, B, Romania        ~330 km
+        );
 
-            final String expected = "Sebes, AB, Romania";
-            Object instance = targetClass.newInstance();
+        log.info("Delivery address: {}", delivery);
+        log.info("Available locations: {}", locations);
+        log.info("Sorted locations: {}", sortedLocations);
 
-            Object result = method.invoke(instance,testAddress);
-
-            assertThat(result.toString()).isEqualTo(expected);
-
-            log.info("Expected value: " + expected);
-            log.info("Actual value: " + result.toString());
-
-        } catch(NoSuchMethodException e){
-            log.error("Method '" + methodName +"' was not found for class" + targetClass.getName(), e);
-        } catch (Exception e){
-            log.error("Something went wrong.", e);
-        }
+        assertThat(sortedLocations).isEqualTo(expected);
     }
-
-    @Test
-    public void stringBuilderTest(){
-        StringBuilder builder = new StringBuilder();
-
-        String fromAddress1 = "Sebes, AB, Romania";
-        String fromAddress2 = "Cluj-Napoca, CJ, Romania";
-        String toAddress = "Stockholm, Sweden";
-
-        builder.append(fromAddress1).append(fromAddress2);
-
-        System.out.println(builder.toString());
-        System.out.println(builder);
-
-        builder = new StringBuilder();
-
-        System.out.println(builder.append(toAddress).toString());
-        System.out.println(builder);
-
-        String[] origins;
-        String[] destinations;
-
-    }
-
-    /*
-    @Test
-    public void checkDistanceMatrixApiRequest(){
-
-        try{
-            DistanceMatrix matrix = distanceCalculator.getRequest(locations, testAddress);
-
-            System.out.println(matrix.toString());
-
-            for(int i = 0 ; i < matrix.rows.length; i++){
-                System.out.println(matrix.rows[i].elements[0].distance);
-            }
-
-
-        }
-        catch(Exception e){
-            log.error("Something went wrong. Can't wait this long.", e);
-        }
-    }
-
-    @Test
-    public void checkLocationSortingByDistance(){
-
-        Map<Location, Integer> distanceMap = new LinkedHashMap<>();
-
-        distanceMap.put(locations.get(0), 100);
-        distanceMap.put(locations.get(1), 50);
-        distanceMap.put(locations.get(2), 80);
-
-        List<Map.Entry<Location, Integer>> sortedList = new LinkedList<>(distanceMap.entrySet());
-
-
-        List<Location> sorted = DistanceCalculator.sortLocations(sortedList);
-
-        System.out.println("Unsorted: " + locations.toString());
-        System.out.println("Sorted:   " + sorted.toString());
-
-        assertThat(sorted).isEqualTo(Arrays.asList(locations.get(1),locations.get(2), locations.get(0)));
-
-    }
-    */
 }
