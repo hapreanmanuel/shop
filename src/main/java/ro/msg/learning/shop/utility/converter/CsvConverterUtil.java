@@ -10,11 +10,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-public abstract class CsvConverterUtil {
+public interface CsvConverterUtil {
 
-    private CsvConverterUtil(){}          //Private constructor to hide implicit public constructor
-
-    protected static List fromCsv(Class pojoClass, InputStream inputStream) throws IOException {
+    static List fromCsv(Class pojoClass, InputStream inputStream) throws IOException {
         CsvMapper mapper = new CsvMapper();
         CsvSchema schema = mapper.schemaFor(pojoClass).withHeader();
 
@@ -23,7 +21,7 @@ public abstract class CsvConverterUtil {
         return iterator.readAll();
     }
 
-    protected static void toCsv(Class pojoClass, List list, OutputStream outputStream) throws IOException{
+    static void toCsv(Class pojoClass, List list, OutputStream outputStream) throws IOException{
         CsvMapper mapper = new CsvMapper();
         CsvSchema schema = mapper.schemaFor(pojoClass).withHeader().withColumnReordering(false);
 

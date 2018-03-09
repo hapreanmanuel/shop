@@ -42,4 +42,13 @@ public class User {
         this.password = password;
         this.authority = authority;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userid=" + userid +
+                ", username='" + username + '\'' +
+                ", authority=" + authority +
+                '}';
+    }
 }

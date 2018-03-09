@@ -38,7 +38,7 @@ public class RevenueConfig {
     @Scheduled(cron = "0 0 22 * * *")
     public void createDailyRevenues() {
 
-        log.info("Starting scheduled job: Daily Revenue Calculation "+ new Date());
+        log.info("Starting scheduled job: Daily Revenue Calculation {} "+ new Date());
 
         List<Order> orders = orderRepository.findByRevenued(false);     // get orders not revenued yet
         List<Location> shopLocations = locationRepository.findAll();    // all locations
@@ -50,7 +50,7 @@ public class RevenueConfig {
             orderRepository.save(locationOrders);       //update 'revenued' field to true
         });
 
-        log.info("Finished scheduled job: Daily Revenue Calculation");
+        log.info("Finished scheduled job: Daily Revenue Calculation {} "+ new Date());
     }
 
 }

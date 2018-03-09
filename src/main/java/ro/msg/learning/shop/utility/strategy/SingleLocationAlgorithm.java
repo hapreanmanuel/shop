@@ -5,6 +5,7 @@ import ro.msg.learning.shop.domain.Location;
 import ro.msg.learning.shop.domain.Stock;
 import ro.msg.learning.shop.dto.ShoppingCartEntry;
 import ro.msg.learning.shop.dto.StrategyDto;
+import ro.msg.learning.shop.exception.InsufficientStocksException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,6 @@ public class SingleLocationAlgorithm implements StrategySelectionAlgorithm{
                 return location;
             }
         }
-        return null;
+        throw new InsufficientStocksException();
     }
 }

@@ -4,7 +4,6 @@ import com.google.maps.DistanceMatrixApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.DistanceMatrix;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import ro.msg.learning.shop.domain.Address;
 import ro.msg.learning.shop.domain.Location;
 import ro.msg.learning.shop.exception.InvalidRequestException;
@@ -16,7 +15,6 @@ public class DistanceCalculator {
 
     private GeoApiContext geoApiContext;
 
-    @Autowired
     public DistanceCalculator(GeoApiContext geoApiContext) {
         this.geoApiContext = geoApiContext;
     }
@@ -81,4 +79,5 @@ public class DistanceCalculator {
                 !address.getRegion().equals("") &&
                 !address.getCity().equals("");
     }
+
 }
