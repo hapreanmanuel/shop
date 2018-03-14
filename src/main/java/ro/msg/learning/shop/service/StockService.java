@@ -1,5 +1,6 @@
 package ro.msg.learning.shop.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.msg.learning.shop.domain.*;
@@ -7,12 +8,14 @@ import ro.msg.learning.shop.dto.ShoppingCartEntry;
 import ro.msg.learning.shop.dto.StrategyDto;
 import ro.msg.learning.shop.exception.*;
 import ro.msg.learning.shop.repository.*;
+import ro.msg.learning.shop.utility.revenue.RevenueCalculator;
 import ro.msg.learning.shop.utility.strategy.*;
 
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class StockService {
 
@@ -20,16 +23,19 @@ public class StockService {
     private final LocationRepository locationRepository;
     private final OrderRepository orderRepository;
     private final StrategySelectionAlgorithm algorithm;
+    private final RevenueRepository revenueRepository;
 
     @Autowired
     public StockService(StockRepository stockRepository,
                         LocationRepository locationRepository,
                         OrderRepository orderRepository,
-                        StrategySelectionAlgorithm algorithm){
+                        StrategySelectionAlgorithm algorithm,
+                        RevenueRepository revenueRepository){
         this.stockRepository=stockRepository;
         this.locationRepository = locationRepository;
         this.orderRepository=orderRepository;
         this.algorithm=algorithm;
+        this.revenueRepository=revenueRepository;
     }
 
     /*
@@ -45,9 +51,27 @@ public class StockService {
         return stockRepository.findByStockKey_LocationIdAndStockKey_ProductId(locationId,productId);
     }
 
+    @Transactional
+    public void performRevenueCalculations(){
+        log.info("Starting scheduled job: Daily Revenue Calculation {} "+ new Date());
+
+        List<Order> orders = orderRepository.findByRevenued(false);     // get orders not revenued yet
+        List<Location> shopLocations = locationRepository.findAll();    // all locations
+
+        //Create a revenue entry for each shop location
+        shopLocations.forEach(location -> {
+            List<Order> locationOrders = orders.stream().filter(order -> order.getLocation().equals(location)).collect(Collectors.toList());
+            revenueRepository.save(RevenueCalculator.getRevenueForLocation(location, locationOrders));
+            orderRepository.save(locationOrders);       //update 'revenued' field to true
+        });
+
+        log.info("Finished scheduled job: Daily Revenue Calculation {} "+ new Date());
+    }
+
 
     @Transactional
     public Order processOrder(int orderId){
+        log.info("Started Processing Order ID: {}",orderId);
 
         Order order = orderRepository.findOne(orderId);
 
@@ -63,20 +87,19 @@ public class StockService {
 
         order.setLocation(location);
 
-        if(location==null){
-            order.setStatus(Order.Status.DENYED);
-        }
-        else{
-            updateStockForOrder(order);
-            order.setStatus(Order.Status.COMPLETE);
-        }
+        updateStockForOrder(order);
+
+        order.setStatus(Order.Status.COMPLETE);
 
         orderRepository.save(order);
+
+        log.info("Selected Export Location Order ID: {}", location.toString());
+
+        log.info("Successfully processed Order ID: {}", orderId);
 
         return order;
     }
 
-    @Transactional
     private void updateStockForOrder(Order order){
         order.getOrderDetails().forEach(orderDetail -> exportStock(order.getLocation().getLocationId(),
                 orderDetail.getProduct().getProductId(),
@@ -98,7 +121,6 @@ public class StockService {
         return exportStocks;
     }
 
-    @Transactional
     private void updateStock(int locationId, int productId, int quantity) {
         Stock stockToUpdate = findStock(locationId,productId);
         stockToUpdate.setQuantity(stockToUpdate.getQuantity() + quantity);

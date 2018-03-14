@@ -39,22 +39,6 @@ public class ExceptionScenariosTest {
     private final Address validAddress = Address.builder()
             .city("Cluj-Napoca").country("Romania").region("CJ").fullAddress("Str. Dave Mira 111").build();
 
-    /*
-    Method to test -> shopService.createOrderSpecifications
-
-    public OrderSpecifications createOrderSpecifications(OrderCreationDto request, String username){
-
-        if(!DistanceCalculator.checkIfAddressIsValid(request.getAddress())){
-            throw new InvalidShippmentAddressException();
-        }
-        if(request.getShoppingCart().isEmpty()){
-            throw new EmptyShoppingCartException();
-        }
-
-        return OrderSpecifications.builder().customer(customerRepository.findByUser_Username(username)).request(request).build();
-    }
-     */
-
     @Test
     public void exceptionsTest(){
         OrderCreationDto request = new OrderCreationDto();
@@ -64,7 +48,7 @@ public class ExceptionScenariosTest {
 
         try{
             log.info("Trying to create OrderSpecifications with invalid address. ");
-            OrderSpecifications os = shopService.createOrderSpecifications(request, username);
+            shopService.createOrderSpecifications(request, username);
         }catch (Exception e){
             log.info("Intercepted exception message: {}", e.getMessage());
             assertThat(e).isInstanceOf(InvalidShippmentAddressException.class);
@@ -75,7 +59,7 @@ public class ExceptionScenariosTest {
 
         try{
             log.info("Trying to create OrderSpecifications with empty shopping cart. ");
-            OrderSpecifications os = shopService.createOrderSpecifications(request, username);
+            shopService.createOrderSpecifications(request, username);
         }catch (Exception e){
             log.info("Intercepted exception message: {}", e.getMessage());
             assertThat(e).isInstanceOf(EmptyShoppingCartException.class);
@@ -83,10 +67,12 @@ public class ExceptionScenariosTest {
 
         request.setShoppingCart(validList);
 
+        log.info("Trying to create OrderSpecifications with valid input. ");
         //Should return a valid response now
         OrderSpecifications os = shopService.createOrderSpecifications(request, username);
 
-        assertThat(os.getCustomer().getFirstName()).isEqualTo(username);
+        log.info("Success");
 
+        assertThat(os.getCustomer().getFirstName()).isEqualTo(username);
     }
 }

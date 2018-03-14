@@ -105,7 +105,6 @@ public class ShopService {
         return newOrder;
     }
 
-    @Transactional
     private void addDetailsToOrder(List<ShoppingCartEntry> request, Order order){
         List<OrderDetail> details = request.stream().map(entry-> OrderDetail.builder()
                 .order(order)
