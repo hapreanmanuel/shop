@@ -10,7 +10,6 @@ import ro.msg.learning.shop.domain.Address;
 import ro.msg.learning.shop.domain.Location;
 import ro.msg.learning.shop.utility.distance.DistanceCalculator;
 
-import java.lang.reflect.Method;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;

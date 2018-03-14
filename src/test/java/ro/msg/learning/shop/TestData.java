@@ -6,7 +6,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import ro.msg.learning.shop.domain.*;
 import ro.msg.learning.shop.repository.*;
-import ro.msg.learning.shop.service.StockService;
 
 import java.math.BigDecimal;
 import java.util.Arrays;

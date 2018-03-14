@@ -15,7 +15,6 @@ public class Order {
     public enum Status{
         CREATED,
         PROCESSING,
-        DENYED,
         COMPLETE
     }
 
