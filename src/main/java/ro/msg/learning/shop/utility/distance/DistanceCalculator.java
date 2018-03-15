@@ -9,11 +9,12 @@ import ro.msg.learning.shop.domain.Location;
 import ro.msg.learning.shop.exception.InvalidRequestException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class DistanceCalculator {
 
-    private GeoApiContext geoApiContext;
+    private final GeoApiContext geoApiContext;
 
     public DistanceCalculator(GeoApiContext geoApiContext) {
         this.geoApiContext = geoApiContext;
@@ -37,7 +38,6 @@ public class DistanceCalculator {
 
     private static List<Location> sortLocationsByDistance(List<Location> targetLocations, DistanceMatrix matrix){
 
-        List<Location> sortedLocations = new ArrayList<>();
         Map<Location, Long> distanceMap = new LinkedHashMap<>();
 
         for(int i = 0; i < targetLocations.size(); i ++){
@@ -48,11 +48,7 @@ public class DistanceCalculator {
 
         sortedList.sort(Comparator.comparing(Map.Entry::getValue));
 
-        for(Map.Entry<Location, Long> entry: sortedList){
-            sortedLocations.add(entry.getKey());
-        }
-
-        return sortedLocations;
+        return sortedList.stream().map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
     private static String[] getDestinations(Address address){
