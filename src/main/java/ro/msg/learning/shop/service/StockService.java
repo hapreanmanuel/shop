@@ -53,7 +53,9 @@ public class StockService {
 
     @Transactional
     public void performRevenueCalculations(){
-        log.info("Starting scheduled job: Daily Revenue Calculation {} "+ new Date());
+        final Date date = new Date();
+
+        log.info("Starting scheduled job: Daily Revenue Calculation {} "+ date);
 
         List<Order> orders = orderRepository.findByRevenued(false);     // get orders not revenued yet
         List<Location> shopLocations = locationRepository.findAll();    // all locations
@@ -62,12 +64,11 @@ public class StockService {
         shopLocations.forEach(location -> {
             List<Order> locationOrders = orders.stream().filter(order -> order.getLocation().equals(location)).collect(Collectors.toList());
             revenueRepository.save(RevenueCalculator.getRevenueForLocation(location, locationOrders));
-            orderRepository.save(locationOrders);       //update 'revenued' field to true
+            orderRepository.save(locationOrders);                       //update 'revenued' field to true
         });
 
-        log.info("Finished scheduled job: Daily Revenue Calculation {} "+ new Date());
+        log.info("Finished scheduled job: Daily Revenue Calculation {} "+ date);
     }
-
 
     @Transactional
     public Order processOrder(int orderId){
@@ -81,9 +82,9 @@ public class StockService {
 
         Location location = algorithm.runStrategy(
                 new StrategyDto(order.getOrderDetails().stream().map(detail-> new ShoppingCartEntry(detail.getProduct().getProductId(),detail.getQuantity()))
-                        .collect(Collectors.toList()), order.getShippingAddress())
-                ,locationRepository.findAll()
-                ,stocksAsMap());
+                        .collect(Collectors.toList()), order.getShippingAddress()),
+                locationRepository.findAll(),
+                stocksAsMap());
 
         order.setLocation(location);
 
@@ -127,7 +128,6 @@ public class StockService {
         stockRepository.save(stockToUpdate);
     }
 
-    //Export stock
     private void exportStock(int locationId, int productId, int quantity){
         updateStock(locationId,productId,-quantity);
     }

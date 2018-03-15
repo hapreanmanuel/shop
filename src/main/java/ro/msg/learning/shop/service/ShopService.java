@@ -44,21 +44,9 @@ public class ShopService {
     /*
         Repository access
      */
-    //Customers
-    public Customer getCustomer(int customerId){return customerRepository.findOne(customerId);}
     public List<Customer> getAllCustomers(){return customerRepository.findAll();}
 
-    //Product
     public List<Product> getAllProducts(){return productRepository.findAll();}
-
-    /*
-        Orders
-     */
-    public Order getOrder(int orderId){return orderRepository.findOne(orderId);}
-    public List<Order> getAllOrders(){return orderRepository.findAll();}
-    public List<Order> getAllOrdesForCustomer(int customerId){
-        return orderRepository.findByCustomer_CustomerId(customerId);
-    }
 
 /*•	You get a single java object as input. This object will contain the order timestamp, the delivery address and a list of products (product ID and quantity) contained in the order.
         •	You return an Order entity if the operation was successful. If not, you throw an exception.
@@ -68,18 +56,6 @@ public class ShopService {
         •	The stocks need to be updated by subtracting the shipped goods.
         •	Afterwards the order is persisted in the database and returned.
 */
-
-    public OrderSpecifications createOrderSpecifications(OrderCreationDto request, String username){
-
-        if(!DistanceCalculator.checkIfAddressIsValid(request.getAddress())){
-            throw new InvalidShippmentAddressException();
-        }
-        if(request.getShoppingCart().isEmpty()){
-            throw new EmptyShoppingCartException();
-        }
-
-        return OrderSpecifications.builder().customer(customerRepository.findByUser_Username(username)).request(request).build();
-    }
 
     @Transactional
     public Order createNewOrder(OrderSpecifications orderSpecifications){
@@ -105,14 +81,25 @@ public class ShopService {
         return newOrder;
     }
 
-    private void addDetailsToOrder(List<ShoppingCartEntry> request, Order order){
-        List<OrderDetail> details = request.stream().map(entry-> OrderDetail.builder()
+    public OrderSpecifications createOrderSpecifications(OrderCreationDto request, String username){
+
+        if(!DistanceCalculator.checkIfAddressIsValid(request.getAddress())){
+            throw new InvalidShippmentAddressException();
+        }
+        if(request.getShoppingCart().isEmpty()){
+            throw new EmptyShoppingCartException();
+        }
+
+        return OrderSpecifications.builder().customer(customerRepository.findByUser_Username(username)).request(request).build();
+    }
+
+    private void addDetailsToOrder(List<ShoppingCartEntry> request, Order order) {
+        List<OrderDetail> details = request.stream().map(entry -> OrderDetail.builder()
                 .order(order)
                 .product(productRepository.findOne(entry.getProductId()))
                 .quantity(entry.getQuantity())
-                .orderDetailKey(new OrderDetailKey(order.getOrderId(),entry.getProductId()))
+                .orderDetailKey(new OrderDetailKey(order.getOrderId(), entry.getProductId()))
                 .build()).collect(Collectors.toList());
         order.setOrderDetails(details);
     }
-
 }

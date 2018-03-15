@@ -9,7 +9,6 @@ import ro.msg.learning.shop.domain.User;
 import ro.msg.learning.shop.dto.UserDetailsImpl;
 import ro.msg.learning.shop.repository.UserRepository;
 
-
 @Service
 public class ShopUserDetailsService implements UserDetailsService{
 

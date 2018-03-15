@@ -6,15 +6,19 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import ro.msg.learning.shop.configuration.StrategyConfig;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class LoggingBean implements InitializingBean{
 
-    private final List<String> availableStrategies = Arrays.asList("SINGLE", "ABUNDANT", "GREEDY");
+    private final List<String> availableStrategies = Arrays.stream(StrategyConfig.Strategy.values()).map(Enum::toString).collect(Collectors.toList());
+
+    private static final String dash = "===========================================";
 
     private Environment environment;
 
@@ -25,7 +29,7 @@ public class LoggingBean implements InitializingBean{
 
     @Override
     public void afterPropertiesSet(){
-        log.info("=================================================");
+        log.info(dash);
         try{
             logEnvVariables();
             logActiveSpringProfiles();
@@ -33,7 +37,7 @@ public class LoggingBean implements InitializingBean{
         }catch(Exception e){
             log.error("Logging Bean failed: ",e);
         }
-        log.info("=================================================");
+        log.info(dash);
     }
 
     private void logEnvVariables() {
