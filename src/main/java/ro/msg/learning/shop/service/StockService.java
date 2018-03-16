@@ -55,17 +55,16 @@ public class StockService {
     public void performRevenueCalculations(){
         final Date date = new Date();
 
-        log.info("Starting scheduled job: Daily Revenue Calculation {} "+ date);
+        log.info("Starting scheduled job: Daily Revenue Calculation "+ date);
 
-        List<Order> orders = orderRepository.findByRevenuedAndStatus(false, Order.Status.COMPLETE);     // get orders not revenued yet
-        List<Location> shopLocations = locationRepository.findAll();    // all locations
-
+        List<Order> orders = orderRepository.findByRevenuedAndStatus(false, Order.Status.COMPLETE);     //orders not revenued yet
+        List<Location> shopLocations = locationRepository.findAll();    //all locations
 
         List<Revenue> revenues = shopLocations.stream().map(location->
-                RevenueCalculator.getRevenueForLocation(location, orders.stream().
-                        filter(order-> order.getLocation().equals(location)).
-                        collect(Collectors.toList()))).
-                collect(Collectors.toList());
+                RevenueCalculator.getRevenueForLocation(location, orders.stream()
+                        .filter(order-> order.getLocation().equals(location))
+                        .collect(Collectors.toList())))
+                .collect(Collectors.toList());
 
         orders.forEach(order -> order.setRevenued(true));
 
@@ -73,12 +72,12 @@ public class StockService {
 
         revenueRepository.save(revenues);
 
-        log.info("Finished scheduled job: Daily Revenue Calculation {} "+ date);
+        log.info("Finished scheduled job: Daily Revenue Calculation "+ date);
     }
 
     @Transactional
     public Order processOrder(int orderId){
-        log.info("Started Processing Order ID: {}",orderId);
+        log.info("Started Processing Order (#ID){}",orderId);
 
         Order order = orderRepository.findOne(orderId);
 
@@ -100,9 +99,9 @@ public class StockService {
 
         orderRepository.save(order);
 
-        log.info("Selected Export Location Order ID: {}", location.toString());
-
-        log.info("Successfully processed Order ID: {}", orderId);
+        log.info("Selected Export Location for Order (#ID){}:",orderId);
+        log.info(location.toString());
+        log.info("Successfully processed Order (#ID){}", orderId);
 
         return order;
     }
