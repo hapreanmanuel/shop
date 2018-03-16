@@ -57,15 +57,16 @@ public class StockService {
 
         log.info("Starting scheduled job: Daily Revenue Calculation {} "+ date);
 
-        List<Order> orders = orderRepository.findByRevenued(false);     // get orders not revenued yet
+        List<Order> orders = orderRepository.findByRevenuedAndStatus(false, Order.Status.COMPLETE);     // get orders not revenued yet
         List<Location> shopLocations = locationRepository.findAll();    // all locations
 
-        //Create a revenue entry for each shop location
-        shopLocations.forEach(location -> {
-            List<Order> locationOrders = orders.stream().filter(order -> order.getLocation().equals(location)).collect(Collectors.toList());
-            revenueRepository.save(RevenueCalculator.getRevenueForLocation(location, locationOrders));
-            orderRepository.save(locationOrders);                       //update 'revenued' field to true
-        });
+
+        List<Revenue> revenues = shopLocations.stream().map(location->
+                RevenueCalculator.getRevenueForLocation(location, orders.stream().
+                        filter(order-> order.getLocation().equals(location)).collect(Collectors.toList()))).
+                collect(Collectors.toList());
+
+        revenueRepository.save(revenues);
 
         log.info("Finished scheduled job: Daily Revenue Calculation {} "+ date);
     }

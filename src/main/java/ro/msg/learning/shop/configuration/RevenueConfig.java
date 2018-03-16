@@ -16,7 +16,7 @@ public class RevenueConfig {
         this.stockService = stockService;
     }
 
-    @Scheduled(cron = "0 0 22 * * *")
+    @Scheduled(cron = "0 5 9 * * *")
     public void createDailyRevenues() {
         stockService.performRevenueCalculations();
     }
