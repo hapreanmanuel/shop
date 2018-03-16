@@ -31,29 +31,27 @@ public class ShopController {
     }
 
     @GetMapping(value = "/products",
-                produces = "application/json")
-    public @ResponseBody List<Product> getAllProducts(){
+            produces = "application/json")
+    public List<Product> getAllProducts(){
         return shopService.getAllProducts();
     }
 
     @GetMapping(value = "/customers",
-                produces = "application/json")
-    public @ResponseBody List<Customer> getCustomers() { return shopService.getAllCustomers(); }
+            produces = "application/json")
+    public List<Customer> getCustomers() { return shopService.getAllCustomers(); }
 
 
-    @PostMapping(
-            value = "/orders/create",
+    @PostMapping(value = "/orders/create",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = "application/json")
-    public @ResponseBody Order createOrder(@RequestBody OrderCreationDto request, Authentication authentication){
+    public Order createOrder(@RequestBody OrderCreationDto request, Authentication authentication){
         OrderSpecifications os = shopService.createOrderSpecifications(request, authentication.getName());
         return shopService.createNewOrder(os);
     }
 
-    @PostMapping(
-            value="/orders/process/{orderId}",
+    @PostMapping(value="/orders/process/{orderId}",
             produces = "application/json")
-    public @ResponseBody Order processOrder(@PathVariable int orderId){
+    public Order processOrder(@PathVariable int orderId){
         return stockService.processOrder(orderId);
     }
 }

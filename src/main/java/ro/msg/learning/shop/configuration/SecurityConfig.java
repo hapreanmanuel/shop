@@ -1,6 +1,5 @@
 package ro.msg.learning.shop.configuration;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +25,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserRepository userRepository;
 
-    @Autowired
     public SecurityConfig(UserRepository userRepository) {
         this.userRepository = userRepository;
     }

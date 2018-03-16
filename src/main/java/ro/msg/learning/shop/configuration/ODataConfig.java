@@ -1,6 +1,5 @@
 package ro.msg.learning.shop.configuration;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +18,7 @@ public class ODataConfig{
 
     @Bean
     public ServletRegistrationBean odataServlet(@Value("${shop.persistence.unit.name}") String namespace,
-                                                @Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory){
+                                                EntityManagerFactory entityManagerFactory){
         return new ServletRegistrationBean(
                 new ShopODataServlet(new ShopODataServiceFactory(entityManagerFactory, namespace)), SERVICE_URL);
     }

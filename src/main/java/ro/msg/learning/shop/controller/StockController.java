@@ -1,7 +1,6 @@
 package ro.msg.learning.shop.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ro.msg.learning.shop.domain.Location;
 import ro.msg.learning.shop.dto.StockDto;
@@ -22,7 +21,7 @@ public class StockController {
 
     @GetMapping(value = "/locations",
                 produces = "application/json")
-    public @ResponseBody List<Location> getLocations() {
+    public List<Location> getLocations() {
         return stockService.getAllLocations();
     }
 
@@ -32,14 +31,11 @@ public class StockController {
         return StockDto.fromStockList(stockService.getStocksForLocation(locationId));
     }
 
-    @GetMapping(
-            value = "/export/{orderId}",
+    @GetMapping(value = "/export/{orderId}",
             produces = "text/csv")
-    @ResponseStatus(HttpStatus.OK)
     public List<StockDto> getExportStockForOrderAsCsv(@PathVariable("orderId") int orderId){
         return StockDto.fromStockList(stockService.getExportStock(orderId));
     }
-
 }
 
 

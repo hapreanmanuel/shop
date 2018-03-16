@@ -1,7 +1,6 @@
 package ro.msg.learning.shop.configuration;
 
 import com.google.maps.GeoApiContext;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +22,7 @@ public class StrategyConfig {
 
     @Bean
     public StrategySelectionAlgorithm getAlgorithm(@Value("${shop.strategy}") Strategy strategy,
-                                                   @Qualifier("distanceCalculator") DistanceCalculator distanceCalculator){
+                                                   DistanceCalculator distanceCalculator){
         switch(strategy){
             case SINGLE:
                 return new SingleLocationAlgorithm();
@@ -35,7 +34,7 @@ public class StrategyConfig {
 
     @Bean
     public DistanceCalculator distanceCalculator(@Value("${shop.strategy.closest.key}") String key,
-                                                 @Qualifier("proxy") Proxy proxy){
+                                                 Proxy proxy){
         GeoApiContext geoApiContext = new GeoApiContext();
         geoApiContext.setApiKey(key);
         geoApiContext.setProxy(proxy);
