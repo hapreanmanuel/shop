@@ -1,5 +1,6 @@
 package ro.msg.learning.shop.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.msg.learning.shop.domain.*;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
         - products
         - suppliers
  */
+@Slf4j
 @Service
 public class ShopService {
 
@@ -60,6 +62,8 @@ public class ShopService {
     @Transactional
     public Order createNewOrder(OrderSpecifications orderSpecifications){
 
+        log.info("Creating order for customer: {}", orderSpecifications.getCustomer().getUser().getUsername());
+
         Order newOrder = new Order();
 
         //Set customer and shipping address
@@ -77,6 +81,9 @@ public class ShopService {
 
         //Persist with order details added
         orderRepository.save(newOrder);
+
+        log.info("Succesfully created Order (#ID){}:", newOrder.getOrderId());
+        log.info(newOrder.toString());
 
         return newOrder;
     }
