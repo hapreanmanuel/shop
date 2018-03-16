@@ -1,6 +1,5 @@
 package ro.msg.learning.shop.configuration;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import ro.msg.learning.shop.repository.UserRepository;
 import ro.msg.learning.shop.service.ShopUserDetailsService;
@@ -26,9 +26,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserRepository userRepository;
 
-    @Autowired
-    public SecurityConfig(UserRepository userRepository) {
+    private final ODataConfig.ODataServiceSecurityFilter filter;
+
+    public SecurityConfig(UserRepository userRepository,
+                          ODataConfig.ODataServiceSecurityFilter filter) {
         this.userRepository = userRepository;
+        this.filter=filter;
     }
 
     @Override
@@ -50,10 +53,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.addFilterAfter(filter, CsrfFilter.class);
         http.csrf().disable();
         http.headers().frameOptions().sameOrigin();
         http.authorizeRequests()
-                .antMatchers("/odata/","/odata/Orders", "/odata/OrderDetails", "/odata/Products").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().permitAll()
