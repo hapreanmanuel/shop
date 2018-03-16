@@ -63,8 +63,13 @@ public class StockService {
 
         List<Revenue> revenues = shopLocations.stream().map(location->
                 RevenueCalculator.getRevenueForLocation(location, orders.stream().
-                        filter(order-> order.getLocation().equals(location)).collect(Collectors.toList()))).
+                        filter(order-> order.getLocation().equals(location)).
+                        collect(Collectors.toList()))).
                 collect(Collectors.toList());
+
+        orders.forEach(order -> order.setRevenued(true));
+
+        orderRepository.save(orders);
 
         revenueRepository.save(revenues);
 
