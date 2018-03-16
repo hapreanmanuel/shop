@@ -6,5 +6,5 @@ import ro.msg.learning.shop.domain.Order;
 import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Integer> {
-    List<Order> findByRevenued(boolean revenued);
+    List<Order> findByRevenuedAndStatus(boolean revenued, Order.Status status);
 }
