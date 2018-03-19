@@ -15,7 +15,7 @@ public class OConfig{
     }
 
     @Bean
-    public OFactory oFactory(@Qualifier("shopService") ShopService shopService){
+    public OFactory oFactory(ShopService shopService){
         return new OFactory(shopService);
     }
 

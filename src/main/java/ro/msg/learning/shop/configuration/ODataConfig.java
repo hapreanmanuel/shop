@@ -42,10 +42,14 @@ public class ODataConfig{
         public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
             String url = ((HttpServletRequest)request).getRequestURL().toString();
-            if(url.contains(ROOT) && ENDPOINTS.parallelStream().anyMatch(url::contains)){
-                chain.doFilter(request,response);
+            if(url.contains(ROOT)){
+                if(ENDPOINTS.parallelStream().anyMatch(url::contains)) {
+                    chain.doFilter(request, response);
+                }else {
+                    throw new InvalidRequestException();
+                }
             }else{
-                throw new InvalidRequestException();
+                chain.doFilter(request, response);
             }
         }
         @Override
@@ -57,5 +61,4 @@ public class ODataConfig{
     public ODataServiceSecurityFilter oDataServiceSecurityFilter(){
         return new ODataServiceSecurityFilter();
     }
-
 }
